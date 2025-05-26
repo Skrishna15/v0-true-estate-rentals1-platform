@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
               </div>
               <div>
                 <h1 className="font-bold text-2xl">TrueEstate</h1>
-                <p className="text-xs text-gray-600">Transparency in Real Estate</p>
+                <p className="text-xs text-gray-600">Clarity before Capital</p>
               </div>
             </Link>
           </div>
@@ -81,7 +81,7 @@ export default function ForgotPasswordPage() {
             </div>
             <div>
               <h1 className="font-bold text-2xl">TrueEstate</h1>
-              <p className="text-xs text-gray-600">Transparency in Real Estate</p>
+              <p className="text-xs text-gray-600">Clarity before Capital</p>
             </div>
           </Link>
           <h2 className="text-3xl font-bold text-gray-900">Reset your password</h2>

@@ -82,7 +82,7 @@ export default function WealthMapPage() {
               </div>
               <div>
                 <h1 className="font-bold text-xl">TrueEstate</h1>
-                <p className="text-xs text-gray-600">Transparency in Real Estate</p>
+                <p className="text-xs text-gray-600">Clarity before Capital</p>
               </div>
             </Link>
             <nav className="hidden md:flex items-center gap-6">

@@ -49,7 +49,7 @@ export default function HomePage() {
               </div>
               <div>
                 <h1 className="font-bold text-xl">TrueEstate</h1>
-                <p className="text-xs text-gray-600">Transparency in Real Estate</p>
+                <p className="text-xs text-gray-600">Clarity before Capital</p>
               </div>
             </div>
             <nav className="hidden md:flex items-center gap-6">
@@ -373,7 +373,7 @@ function DashboardPage() {
               </div>
               <div>
                 <h1 className="font-bold text-xl">TrueEstate</h1>
-                <p className="text-xs text-gray-600">Dashboard</p>
+                <p className="text-xs text-gray-600">Clarity before Capital</p>
               </div>
             </div>
             <nav className="flex items-center gap-6">
