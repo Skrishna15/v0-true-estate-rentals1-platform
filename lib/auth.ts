@@ -115,9 +115,20 @@ export const authOptions: NextAuthOptions = {
       }
       return session
     },
+    async signOut({ token }) {
+      // Clear any additional session data if needed
+      return true
+    },
+  },
+  events: {
+    async signOut(message) {
+      // Log sign out event
+      console.log("User signed out:", message)
+    },
   },
   pages: {
     signIn: "/signin",
     signUp: "/signup",
   },
+  secret: process.env.NEXTAUTH_SECRET,
 }

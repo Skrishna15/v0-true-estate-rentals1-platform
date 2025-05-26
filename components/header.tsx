@@ -20,9 +20,21 @@ export function Header() {
   const { data: session, status } = useSession()
   const [notifications] = useState(2)
   const [searchQuery, setSearchQuery] = useState("")
+  const [isSigningOut, setIsSigningOut] = useState(false)
 
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: "/" })
+    try {
+      setIsSigningOut(true)
+      await signOut({
+        callbackUrl: "/",
+        redirect: true,
+      })
+    } catch (error) {
+      console.error("Sign out error:", error)
+      window.location.href = "/"
+    } finally {
+      setIsSigningOut(false)
+    }
   }
 
   const handleSearch = () => {
@@ -116,9 +128,9 @@ export function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer" disabled={isSigningOut}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    Sign out
+                    {isSigningOut ? "Signing out..." : "Sign out"}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
