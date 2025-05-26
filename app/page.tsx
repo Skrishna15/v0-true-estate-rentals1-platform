@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge"
 import { InteractiveMap } from "@/components/interactive-map"
 import { PropertySearch } from "@/components/property-search"
 import Link from "next/link"
+import { AuthDialog } from "@/components/auth-dialog"
+import { GlobeMap } from "@/components/globe-map"
 
 const mockWealthData = [
   {
@@ -142,8 +144,7 @@ export default function HomePage() {
   }
 
   const handleSignIn = () => {
-    // In a real app, this would redirect to auth
-    alert("Sign In functionality would redirect to authentication page")
+    // This will now open the proper auth dialog
   }
 
   return (
@@ -168,9 +169,9 @@ export default function HomePage() {
               <button onClick={scrollToAbout} className="text-gray-600 hover:text-blue-600 transition-colors">
                 About
               </button>
-              <button onClick={handleSignIn} className="text-gray-600 hover:text-blue-600 transition-colors">
-                Sign In
-              </button>
+              <AuthDialog>
+                <button className="text-gray-600 hover:text-blue-600 transition-colors">Sign In</button>
+              </AuthDialog>
               <Button onClick={handleGetStarted}>Get Started</Button>
             </nav>
           </div>
@@ -457,6 +458,25 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </div>
+        </div>
+      </section>
+
+      {/* 3D Globe Map Section */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-4">Global Property Network</h2>
+          <p className="text-gray-600 mb-6">Explore verified properties worldwide on our interactive 3D globe</p>
+        </div>
+
+        <div className="h-96 lg:h-[600px] rounded-xl overflow-hidden shadow-2xl">
+          <GlobeMap
+            properties={mapProperties.map((prop) => ({
+              ...prop,
+              country: "USA",
+              city: prop.locations[0] || "Unknown",
+            }))}
+            onPropertySelect={handlePropertySelect}
+          />
         </div>
       </section>
 
