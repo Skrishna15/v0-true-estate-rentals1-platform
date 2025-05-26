@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Building, DollarSign, Users, Eye, Shield, Search, MapPin, BarChart3, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -50,7 +50,21 @@ export default function HomePage() {
   const [selectedOwner, setSelectedOwner] = useState<string | null>(null)
   const [mapProperties, setMapProperties] = useState(mockWealthData)
   const [searchQuery, setSearchQuery] = useState("")
-  const [showSignIn, setShowSignIn] = useState(false)
+  const [currentTime, setCurrentTime] = useState("")
+  const [mounted, setMounted] = useState(false)
+
+  // Fix hydration mismatch by only showing dynamic content after mount
+  useEffect(() => {
+    setMounted(true)
+    setCurrentTime(new Date().toLocaleTimeString())
+
+    // Update time every 15 seconds
+    const interval = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString())
+    }, 15000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const handlePropertySelect = (property: any) => {
     setSelectedOwner(property.id)
@@ -128,7 +142,6 @@ export default function HomePage() {
   }
 
   const handleSignIn = () => {
-    setShowSignIn(true)
     // In a real app, this would redirect to auth
     alert("Sign In functionality would redirect to authentication page")
   }
@@ -284,9 +297,10 @@ export default function HomePage() {
             </Card>
           </div>
 
-          <p className="text-xs text-gray-500 mt-6">
-            Data updates every 15 seconds • Last sync: {new Date().toLocaleTimeString()}
-          </p>
+          {/* Only show timestamp after component mounts to prevent hydration mismatch */}
+          {mounted && (
+            <p className="text-xs text-gray-500 mt-6">Data updates every 15 seconds • Last sync: {currentTime}</p>
+          )}
         </div>
       </section>
 
