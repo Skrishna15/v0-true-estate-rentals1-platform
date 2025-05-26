@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { signIn, getSession } from "next-auth/react"
-import { Building, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react"
+import { Building, Mail, Lock, Eye, EyeOff, AlertCircle, User, Shield, Briefcase } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -11,6 +11,36 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
+
+const DEMO_ACCOUNTS = [
+  {
+    email: "admin@trueestate.com",
+    password: "demo",
+    name: "Admin Demo",
+    role: "admin",
+    description: "Full platform access with admin controls",
+    icon: Shield,
+    color: "text-red-600",
+  },
+  {
+    email: "user@trueestate.com",
+    password: "demo",
+    name: "User Demo",
+    role: "renter",
+    description: "Standard user with property search and bookmarking",
+    icon: User,
+    color: "text-blue-600",
+  },
+  {
+    email: "agent@trueestate.com",
+    password: "demo",
+    name: "Agent Demo",
+    role: "agent",
+    description: "Real estate agent with listing management",
+    icon: Briefcase,
+    color: "text-green-600",
+  },
+]
 
 export default function SignInPage() {
   const [email, setEmail] = useState("")
@@ -48,27 +78,38 @@ export default function SignInPage() {
     }
   }
 
+  const handleDemoSignIn = async (demoEmail: string, demoPassword: string) => {
+    setLoading(true)
+    setError("")
+
+    try {
+      const result = await signIn("credentials", {
+        email: demoEmail,
+        password: demoPassword,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        setError("Demo sign in failed")
+      } else {
+        const session = await getSession()
+        if (session) {
+          router.push("/dashboard")
+        }
+      }
+    } catch (err) {
+      setError("Demo sign in failed")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleSocialSignIn = async (provider: string) => {
     setLoading(true)
     try {
       await signIn(provider, { callbackUrl: "/dashboard" })
     } catch (err) {
       setError(`Failed to sign in with ${provider}`)
-      setLoading(false)
-    }
-  }
-
-  const handleDemoSignIn = async () => {
-    setLoading(true)
-    setError("")
-
-    try {
-      // Simulate demo account sign in
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      router.push("/dashboard")
-    } catch (err) {
-      setError("Demo sign in failed")
-    } finally {
       setLoading(false)
     }
   }
@@ -90,6 +131,37 @@ export default function SignInPage() {
           <h2 className="text-3xl font-bold text-gray-900">Welcome back</h2>
           <p className="mt-2 text-sm text-gray-600">Sign in to access your wealth map dashboard</p>
         </div>
+
+        {/* Demo Accounts */}
+        <Card className="bg-blue-50 border-blue-200">
+          <CardHeader>
+            <CardTitle className="text-blue-800">Demo Accounts</CardTitle>
+            <CardDescription className="text-blue-700">Try TrueEstate with different user roles</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {DEMO_ACCOUNTS.map((account) => {
+              const IconComponent = account.icon
+              return (
+                <Button
+                  key={account.email}
+                  variant="outline"
+                  className="w-full justify-start h-auto p-4 border-blue-300 hover:bg-blue-100"
+                  onClick={() => handleDemoSignIn(account.email, account.password)}
+                  disabled={loading}
+                >
+                  <div className="flex items-center gap-3 w-full">
+                    <IconComponent className={`w-5 h-5 ${account.color}`} />
+                    <div className="text-left flex-1">
+                      <div className="font-medium text-gray-900">{account.name}</div>
+                      <div className="text-sm text-gray-600">{account.description}</div>
+                      <div className="text-xs text-gray-500 mt-1">{account.email} / demo</div>
+                    </div>
+                  </div>
+                </Button>
+              )
+            })}
+          </CardContent>
+        </Card>
 
         {/* Sign In Form */}
         <Card>
@@ -237,22 +309,6 @@ export default function SignInPage() {
             </Link>
           </p>
         </div>
-
-        {/* Demo Account */}
-        <Card className="bg-blue-50 border-blue-200">
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-blue-800 mb-2">Demo Account</h3>
-            <p className="text-sm text-blue-700 mb-3">Try TrueEstate with our demo account to explore all features</p>
-            <Button
-              variant="outline"
-              className="w-full border-blue-300 text-blue-700 hover:bg-blue-100"
-              onClick={handleDemoSignIn}
-              disabled={loading}
-            >
-              {loading ? "Loading Demo..." : "Use Demo Account"}
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     </div>
   )

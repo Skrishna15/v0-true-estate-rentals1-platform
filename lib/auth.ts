@@ -1,12 +1,38 @@
 import type { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
-import { MongoDBAdapter } from "@auth/mongodb-adapter"
 import { getDatabase } from "@/lib/mongodb"
 import bcrypt from "bcryptjs"
 
+// Demo accounts for testing
+const DEMO_ACCOUNTS = [
+  {
+    id: "admin-demo",
+    email: "admin@trueestate.com",
+    password: "demo",
+    name: "Admin Demo",
+    role: "admin",
+    verified: true,
+  },
+  {
+    id: "user-demo",
+    email: "user@trueestate.com",
+    password: "demo",
+    name: "User Demo",
+    role: "renter",
+    verified: true,
+  },
+  {
+    id: "agent-demo",
+    email: "agent@trueestate.com",
+    password: "demo",
+    name: "Agent Demo",
+    role: "agent",
+    verified: true,
+  },
+]
+
 export const authOptions: NextAuthOptions = {
-  adapter: MongoDBAdapter(getDatabase()),
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -19,27 +45,48 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        const db = await getDatabase()
-        const user = await db.collection("users").findOne({
-          email: credentials.email,
-        })
+        // Check demo accounts first
+        const demoAccount = DEMO_ACCOUNTS.find(
+          (account) => account.email === credentials.email && account.password === credentials.password,
+        )
 
-        if (!user) {
-          return null
+        if (demoAccount) {
+          return {
+            id: demoAccount.id,
+            email: demoAccount.email,
+            name: demoAccount.name,
+            role: demoAccount.role,
+            verified: demoAccount.verified,
+          }
         }
 
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
+        // Check database for real accounts
+        try {
+          const db = await getDatabase()
+          const user = await db.collection("users").findOne({
+            email: credentials.email,
+          })
 
-        if (!isPasswordValid) {
+          if (!user) {
+            return null
+          }
+
+          const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
+
+          if (!isPasswordValid) {
+            return null
+          }
+
+          return {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            verified: user.verified,
+          }
+        } catch (error) {
+          console.error("Database auth error:", error)
           return null
-        }
-
-        return {
-          id: user._id.toString(),
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          verified: user.verified,
         }
       },
     }),
@@ -70,7 +117,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/auth/signin",
-    signUp: "/auth/signup",
+    signIn: "/signin",
+    signUp: "/signup",
   },
 }
