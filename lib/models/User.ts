@@ -32,6 +32,11 @@ export interface User {
     status: "active" | "cancelled" | "expired"
     expiresAt?: Date
   }
+  savedProperties: ObjectId[]
+  searchHistory: {
+    query: string
+    timestamp: Date
+  }[]
   createdAt: Date
   updatedAt: Date
 }

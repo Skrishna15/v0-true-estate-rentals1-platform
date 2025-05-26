@@ -73,21 +73,58 @@ export default function AdminDashboard() {
 
   const fetchAdminData = async () => {
     try {
-      const [statsRes, usersRes, propertiesRes] = await Promise.all([
-        fetch("/api/admin/stats"),
-        fetch("/api/admin/users"),
-        fetch("/api/admin/properties"),
+      // Mock data for now - replace with actual API calls
+      setStats({
+        totalUsers: 15420,
+        totalProperties: 8750,
+        verifiedOwners: 3200,
+        flaggedProperties: 45,
+        totalRevenue: 125000,
+        activeSubscriptions: 2100,
+      })
+
+      setUsers([
+        {
+          _id: "1",
+          name: "John Smith",
+          email: "john@example.com",
+          role: "owner",
+          verified: true,
+          createdAt: "2024-01-15",
+          lastActive: "2024-01-20",
+          subscription: { plan: "premium", status: "active" },
+        },
+        {
+          _id: "2",
+          name: "Sarah Johnson",
+          email: "sarah@example.com",
+          role: "renter",
+          verified: false,
+          createdAt: "2024-01-10",
+          lastActive: "2024-01-19",
+          subscription: { plan: "free", status: "active" },
+        },
       ])
 
-      const [statsData, usersData, propertiesData] = await Promise.all([
-        statsRes.json(),
-        usersRes.json(),
-        propertiesRes.json(),
+      setProperties([
+        {
+          _id: "1",
+          address: { street: "123 Main St", city: "San Francisco", state: "CA" },
+          owner: { name: "John Smith", verified: true },
+          transparencyScore: 85,
+          flagged: false,
+          createdAt: "2024-01-15",
+        },
+        {
+          _id: "2",
+          address: { street: "456 Oak Ave", city: "Los Angeles", state: "CA" },
+          owner: { name: "Jane Doe", verified: false },
+          transparencyScore: 45,
+          flagged: true,
+          flagReason: "Suspicious pricing",
+          createdAt: "2024-01-12",
+        },
       ])
-
-      setStats(statsData.stats)
-      setUsers(usersData.users)
-      setProperties(propertiesData.properties)
     } catch (error) {
       console.error("Failed to fetch admin data:", error)
     } finally {
@@ -97,15 +134,9 @@ export default function AdminDashboard() {
 
   const handleUserAction = async (userId: string, action: "verify" | "suspend" | "delete") => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
-      })
-
-      if (response.ok) {
-        fetchAdminData()
-      }
+      // Mock action - replace with actual API call
+      console.log(`Performing ${action} on user ${userId}`)
+      fetchAdminData()
     } catch (error) {
       console.error("Failed to perform user action:", error)
     }
@@ -113,15 +144,9 @@ export default function AdminDashboard() {
 
   const handlePropertyAction = async (propertyId: string, action: "approve" | "flag" | "remove") => {
     try {
-      const response = await fetch(`/api/admin/properties/${propertyId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
-      })
-
-      if (response.ok) {
-        fetchAdminData()
-      }
+      // Mock action - replace with actual API call
+      console.log(`Performing ${action} on property ${propertyId}`)
+      fetchAdminData()
     } catch (error) {
       console.error("Failed to perform property action:", error)
     }

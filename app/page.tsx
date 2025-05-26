@@ -62,10 +62,10 @@ export default function HomePage() {
               ) : (
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" asChild>
-                    <Link href="/auth/signin">Sign In</Link>
+                    <Link href="/signin">Sign In</Link>
                   </Button>
                   <Button asChild>
-                    <Link href="/auth/signup">Sign Up</Link>
+                    <Link href="/signup">Sign Up</Link>
                   </Button>
                 </div>
               )}
@@ -256,7 +256,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" className="px-8" asChild>
-              <Link href="/auth/signup">
+              <Link href="/signup">
                 Start Free Trial
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>

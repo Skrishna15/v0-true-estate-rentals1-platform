@@ -114,3 +114,27 @@ export interface PropertyBookmark {
   tags: string[]
   createdAt: Date
 }
+
+export interface PropertyComment {
+  _id?: ObjectId
+  propertyId: ObjectId
+  userId: ObjectId
+  userName: string
+  userAvatar?: string
+  comment: string
+  rating: number
+  createdAt: Date
+  verified: boolean
+}
+
+export interface PropertyQuestion {
+  _id?: ObjectId
+  propertyId: ObjectId
+  userId: ObjectId
+  userName: string
+  question: string
+  answer?: string
+  answeredBy?: ObjectId
+  answeredAt?: Date
+  createdAt: Date
+}

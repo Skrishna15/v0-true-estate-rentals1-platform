@@ -1,43 +1,76 @@
 import type { NextAuthOptions } from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
-import LinkedInProvider from "next-auth/providers/linkedin"
-import AzureADProvider from "next-auth/providers/azure-ad"
+import { MongoDBAdapter } from "@auth/mongodb-adapter"
+import { getDatabase } from "@/lib/mongodb"
+import bcrypt from "bcryptjs"
 
 export const authOptions: NextAuthOptions = {
+  adapter: MongoDBAdapter(getDatabase()),
   providers: [
+    CredentialsProvider({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null
+        }
+
+        const db = await getDatabase()
+        const user = await db.collection("users").findOne({
+          email: credentials.email,
+        })
+
+        if (!user) {
+          return null
+        }
+
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
+
+        if (!isPasswordValid) {
+          return null
+        }
+
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          verified: user.verified,
+        }
+      },
+    }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
-    LinkedInProvider({
-      clientId: process.env.LINKEDIN_CLIENT_ID!,
-      clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
-    }),
-    AzureADProvider({
-      clientId: process.env.AZURE_AD_CLIENT_ID!,
-      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-      tenantId: process.env.AZURE_AD_TENANT_ID!,
-    }),
   ],
-  pages: {
-    signIn: "/signin",
-    error: "/signin",
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id
+        token.role = user.role
+        token.verified = user.verified
       }
       return token
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id as string
+        session.user.id = token.sub!
+        session.user.role = token.role as string
+        session.user.verified = token.verified as boolean
       }
       return session
     },
   },
-  session: {
-    strategy: "jwt",
+  pages: {
+    signIn: "/auth/signin",
+    signUp: "/auth/signup",
   },
 }
