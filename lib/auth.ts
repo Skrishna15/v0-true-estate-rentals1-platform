@@ -1,15 +1,13 @@
 import type { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
-import { getDatabase } from "@/lib/mongodb"
-import bcrypt from "bcryptjs"
 
 // Demo accounts for testing
 const DEMO_ACCOUNTS = [
   {
     id: "admin-demo",
     email: "admin@trueestate.com",
-    password: "demo",
+    password: "demo123",
     name: "Admin Demo",
     role: "admin",
     verified: true,
@@ -17,7 +15,7 @@ const DEMO_ACCOUNTS = [
   {
     id: "user-demo",
     email: "user@trueestate.com",
-    password: "demo",
+    password: "demo123",
     name: "User Demo",
     role: "renter",
     verified: true,
@@ -25,7 +23,7 @@ const DEMO_ACCOUNTS = [
   {
     id: "agent-demo",
     email: "agent@trueestate.com",
-    password: "demo",
+    password: "demo123",
     name: "Agent Demo",
     role: "agent",
     verified: true,
@@ -42,10 +40,10 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null
+          throw new Error("Please enter email and password")
         }
 
-        // Check demo accounts first
+        // Check demo accounts
         const demoAccount = DEMO_ACCOUNTS.find(
           (account) => account.email === credentials.email && account.password === credentials.password,
         )
@@ -60,34 +58,7 @@ export const authOptions: NextAuthOptions = {
           }
         }
 
-        // Check database for real accounts
-        try {
-          const db = await getDatabase()
-          const user = await db.collection("users").findOne({
-            email: credentials.email,
-          })
-
-          if (!user) {
-            return null
-          }
-
-          const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
-
-          if (!isPasswordValid) {
-            return null
-          }
-
-          return {
-            id: user._id.toString(),
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            verified: user.verified,
-          }
-        } catch (error) {
-          console.error("Database auth error:", error)
-          return null
-        }
+        throw new Error("Invalid credentials")
       },
     }),
     GoogleProvider({
@@ -97,10 +68,10 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token.role = user.role
         token.verified = user.verified
@@ -115,20 +86,11 @@ export const authOptions: NextAuthOptions = {
       }
       return session
     },
-    async signOut({ token }) {
-      // Clear any additional session data if needed
-      return true
-    },
-  },
-  events: {
-    async signOut(message) {
-      // Log sign out event
-      console.log("User signed out:", message)
-    },
   },
   pages: {
     signIn: "/signin",
-    signUp: "/signup",
+    error: "/signin",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
 }

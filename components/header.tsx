@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { Building, User, LogOut, Settings, Bell, Menu, Search } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -21,16 +22,20 @@ export function Header() {
   const [notifications] = useState(2)
   const [searchQuery, setSearchQuery] = useState("")
   const [isSigningOut, setIsSigningOut] = useState(false)
+  const router = useRouter()
 
   const handleSignOut = async () => {
     try {
       setIsSigningOut(true)
       await signOut({
         callbackUrl: "/",
-        redirect: true,
+        redirect: false,
       })
+      // Force navigation to home page
+      window.location.href = "/"
     } catch (error) {
       console.error("Sign out error:", error)
+      // Fallback: force redirect
       window.location.href = "/"
     } finally {
       setIsSigningOut(false)
@@ -39,7 +44,7 @@ export function Header() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`)
     }
   }
 
@@ -51,7 +56,7 @@ export function Header() {
           <Button variant="ghost" size="sm" className="md:hidden">
             <Menu className="w-5 h-5" />
           </Button>
-          <Link href="/" className="flex items-center gap-2">
+          <Link href={session ? "/wealth-map" : "/"} className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <Building className="w-5 h-5 text-white" />
             </div>
@@ -122,9 +127,9 @@ export function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/settings" className="cursor-pointer">
+                    <Link href="/dashboard" className="cursor-pointer">
                       <Settings className="mr-2 h-4 w-4" />
-                      Settings
+                      Dashboard
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
