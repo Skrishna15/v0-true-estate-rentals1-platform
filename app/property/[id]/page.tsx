@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   ArrowLeft,
   Shield,
@@ -16,9 +16,6 @@ import {
   Phone,
   Mail,
   Calendar,
-  BarChart3,
-  Eye,
-  CheckCircle,
 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -28,16 +25,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Label } from "@/components/ui/label"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { OwnerVerification } from "@/components/owner-verification"
+import { OwnerAnalyticsDashboard } from "@/components/owner-analytics-dashboard"
 
-// Enhanced property data focusing on trust & verification
+// Enhanced property data with real API integration
 const propertyData = {
   id: 1,
   address: "123 Oak Street, San Francisco, CA 94102",
@@ -62,64 +53,40 @@ const propertyData = {
     totalValue: "$8.2M",
     responseRate: "98%",
     responseTime: "< 2 hours",
-    verificationStatus: {
-      identityVerified: true,
-      backgroundCheck: true,
-      ownershipDocs: true,
-      businessEntity: true,
-      professionalProfile: true,
+    portfolio: {
+      cities: [
+        { name: "San Francisco", count: 8, value: "$5.2M" },
+        { name: "Oakland", count: 3, value: "$2.1M" },
+        { name: "Berkeley", count: 1, value: "$0.9M" },
+      ],
+      propertyTypes: [
+        { type: "Apartments", count: 7 },
+        { type: "Single Family", count: 3 },
+        { type: "Condos", count: 2 },
+      ],
+      recentActivity: [
+        { action: "Purchased", property: "2-unit building on Pine St", date: "2 weeks ago" },
+        { action: "Renovated", property: "123 Oak Street unit 2A", date: "1 month ago" },
+        { action: "Listed", property: "456 Market Street", date: "2 months ago" },
+      ],
     },
-  },
-  neighborhood: {
-    schools: [
-      { name: "Lincoln Elementary", rating: "9/10", distance: "0.3 mi" },
-      { name: "Roosevelt Middle", rating: "8/10", distance: "0.5 mi" },
-      { name: "Washington High", rating: "9/10", distance: "0.8 mi" },
-    ],
-    hospitals: [
-      { name: "UCSF Medical Center", rating: "4.8/5", distance: "0.8 mi" },
-      { name: "St. Mary's Hospital", rating: "4.6/5", distance: "1.2 mi" },
-    ],
-    transit: [
-      { name: "Powell St BART", distance: "0.3 mi" },
-      { name: "Bus Line 38", distance: "0.1 mi" },
-    ],
   },
   comments: [
     {
       id: 1,
       user: "Mike Chen",
       avatar: "/placeholder-user.jpg",
-      comment:
-        "Sarah is incredibly responsive and professional. No rental scam concerns here - everything was transparent!",
+      comment: "Great location and responsive landlord. Highly recommend!",
       rating: 5,
       date: "2 weeks ago",
-      verified: true,
     },
     {
       id: 2,
       user: "Lisa Park",
       avatar: "/placeholder-user.jpg",
-      comment: "Verified ownership documents upfront. Great landlord, highly recommend for anyone worried about scams.",
+      comment: "Beautiful apartment with amazing city views. Sarah is very professional.",
       rating: 5,
       date: "1 month ago",
-      verified: true,
-    },
-  ],
-  qna: [
-    {
-      id: 1,
-      question: "Are pets allowed?",
-      answer: "Yes, cats and small dogs are welcome with a $200 deposit.",
-      askedBy: "Jennifer M.",
-      answeredDate: "2 days ago",
-    },
-    {
-      id: 2,
-      question: "Is parking included?",
-      answer: "One parking spot is included, additional spots available for $150/month.",
-      askedBy: "David L.",
-      answeredDate: "1 week ago",
     },
   ],
 }
@@ -128,7 +95,34 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
   const [newComment, setNewComment] = useState("")
   const [question, setQuestion] = useState("")
   const [neighborhoodData, setNeighborhoodData] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
+  const [propertyDetails, setPropertyDetails] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Fetch real property and neighborhood data
+    const fetchData = async () => {
+      try {
+        const [neighborhoodResponse, propertyResponse] = await Promise.all([
+          fetch(
+            `/api/neighborhood?lat=${propertyData.coordinates.lat}&lng=${propertyData.coordinates.lng}&address=${encodeURIComponent(propertyData.address)}`,
+          ),
+          fetch(`/api/properties?address=${encodeURIComponent(propertyData.address)}`),
+        ])
+
+        const neighborhoodResult = await neighborhoodResponse.json()
+        const propertyResult = await propertyResponse.json()
+
+        setNeighborhoodData(neighborhoodResult)
+        setPropertyDetails(propertyResult)
+      } catch (error) {
+        console.error("Error fetching data:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const handleAddComment = () => {
     if (newComment.trim()) {
@@ -150,10 +144,10 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
       <header className="border-b bg-white sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
-            <Link href="/">
+            <Link href="/properties">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Wealth Map
+                Back to Search
               </Button>
             </Link>
             <div className="flex items-center gap-2">
@@ -182,11 +176,11 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                   <div className="absolute top-4 right-4 flex gap-2">
                     <Badge className="bg-green-500 text-white">
                       <Shield className="w-3 h-3 mr-1" />
-                      {propertyData.owner.trustScore}% Trust Score
+                      {propertyData.owner.trustScore}% Trust
                     </Badge>
                     <Badge className="bg-blue-500 text-white">
-                      <CheckCircle className="w-3 h-3 mr-1" />
-                      Verified Owner
+                      <FileText className="w-3 h-3 mr-1" />
+                      Verified
                     </Badge>
                   </div>
                 </div>
@@ -205,279 +199,222 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                       <span className="text-gray-500">(24 reviews)</span>
                     </div>
                   </div>
-                  <div className="flex gap-4 text-sm text-gray-600 mb-4">
+                  <div className="flex gap-4 text-sm text-gray-600">
                     <span>{propertyData.bedrooms} Bedrooms</span>
                     <span>{propertyData.bathrooms} Bathrooms</span>
                     <span>{propertyData.sqft} sq ft</span>
                   </div>
 
-                  {/* Scam Prevention Notice */}
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Shield className="w-5 h-5 text-green-600" />
-                      <span className="font-semibold text-green-800">Scam-Free Verified Listing</span>
+                  {/* Real Property Data */}
+                  {propertyDetails && (
+                    <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                      <h3 className="font-semibold mb-2">Live Property Data</h3>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-600">Market Value:</span>
+                          <div className="font-medium">{propertyDetails.rental?.rent_estimate || "N/A"}</div>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Last Updated:</span>
+                          <div className="font-medium">Real-time</div>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-sm text-green-700">
-                      This property and owner have been verified through our comprehensive trust system. All ownership
-                      documents confirmed and background checks completed.
-                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* FEATURE 1: Trust Score Badge - Prominent Display */}
+            <Card className="border-green-200 bg-green-50">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-green-800 mb-2">
+                      Trust Score: {propertyData.owner.trustScore}%
+                    </h3>
+                    <p className="text-green-700">This owner is verified safe to rent from</p>
+                  </div>
+                  <div className="text-right">
+                    <Badge className="bg-green-500 text-white text-lg px-4 py-2">
+                      <Shield className="w-5 h-5 mr-2" />
+                      VERIFIED SAFE
+                    </Badge>
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 gap-4 mt-4 text-sm">
+                  <div className="text-center">
+                    <div className="font-semibold text-green-800">Identity</div>
+                    <div className="text-green-600">✓ Verified</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-green-800">Ownership</div>
+                    <div className="text-green-600">✓ Verified</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-green-800">Reviews</div>
+                    <div className="text-green-600">4.8/5 (24)</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-semibold text-green-800">Response</div>
+                    <div className="text-green-600">&lt; 2 hours</div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Owner Profile with Trust & Verification Focus */}
+            {/* FEATURE 2: Ownership Validation Documents */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Shield className="w-5 h-5" />
-                  Verified Property Owner
+                  <FileText className="w-5 h-5" />
+                  Ownership Validation Documents
                 </CardTitle>
-                <CardDescription>Complete verification and trust metrics</CardDescription>
+                <CardDescription>Verified legal proof of ownership</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex items-start gap-4 mb-6">
-                  <Avatar className="w-16 h-16">
-                    <AvatarImage src={propertyData.owner.avatar || "/placeholder.svg"} />
-                    <AvatarFallback>
-                      {propertyData.owner.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-xl font-semibold">{propertyData.owner.name}</h3>
-                      <Badge className="bg-green-500 text-white">
-                        <Shield className="w-3 h-3 mr-1" />
-                        {propertyData.owner.trustScore}% Trust Score
-                      </Badge>
-                    </div>
-                    <p className="text-gray-600 mb-2">Property owner since {propertyData.owner.joinDate}</p>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-green-600">Identity Verified</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-green-600">Background Checked</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-green-600">Ownership Verified</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-green-600">Business Entity Confirmed</span>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
+                    <div className="flex items-center gap-3 mb-2">
+                      <FileText className="w-8 h-8 text-blue-600" />
+                      <div>
+                        <h4 className="font-medium">Property Deed</h4>
+                        <p className="text-sm text-gray-600">Verified 2023</p>
                       </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          <FileText className="w-4 h-4 mr-2" />
-                          View Ownership Docs
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-2xl">
-                        <DialogHeader>
-                          <DialogTitle>Verified Ownership Documents</DialogTitle>
-                          <DialogDescription>Legal proof of ownership and verification status</DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div className="border rounded-lg p-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <FileText className="w-5 h-5 text-blue-600" />
-                              <span className="font-medium">Property Deed</span>
-                              <Badge className="bg-green-100 text-green-800">Verified ✓</Badge>
-                            </div>
-                            <p className="text-sm text-gray-600 mb-3">
-                              Official property deed showing ownership transfer and current legal owner
-                            </p>
-                            <Button variant="outline" size="sm">
-                              <Eye className="w-4 h-4 mr-2" />
-                              View Document (PDF)
-                            </Button>
-                          </div>
-                          <div className="border rounded-lg p-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <FileText className="w-5 h-5 text-blue-600" />
-                              <span className="font-medium">Tax Assessment Records</span>
-                              <Badge className="bg-green-100 text-green-800">Verified ✓</Badge>
-                            </div>
-                            <p className="text-sm text-gray-600 mb-3">
-                              Current property tax assessment and payment history
-                            </p>
-                            <Button variant="outline" size="sm">
-                              <Eye className="w-4 h-4 mr-2" />
-                              View Records
-                            </Button>
-                          </div>
-                          <div className="border rounded-lg p-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <FileText className="w-5 h-5 text-blue-600" />
-                              <span className="font-medium">Business License</span>
-                              <Badge className="bg-green-100 text-green-800">Verified ✓</Badge>
-                            </div>
-                            <p className="text-sm text-gray-600 mb-3">
-                              Valid business license for {propertyData.owner.company}
-                            </p>
-                            <Button variant="outline" size="sm">
-                              <Eye className="w-4 h-4 mr-2" />
-                              View License
-                            </Button>
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                </div>
-
-                {/* Mini Dashboard - Portfolio Overview */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold mb-4 flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4" />
-                    Portfolio Overview & Trust Metrics
-                  </h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">{propertyData.owner.totalProperties}</div>
-                      <div className="text-sm text-gray-600">Properties Owned</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">{propertyData.owner.totalValue}</div>
-                      <div className="text-sm text-gray-600">Portfolio Value</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">{propertyData.owner.responseRate}</div>
-                      <div className="text-sm text-gray-600">Response Rate</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-orange-600">{propertyData.owner.responseTime}</div>
-                      <div className="text-sm text-gray-600">Avg Response</div>
-                    </div>
+                    <Button variant="outline" size="sm" className="w-full">
+                      View Document
+                    </Button>
                   </div>
 
-                  {/* Property Distribution Chart */}
-                  <div>
-                    <h5 className="font-medium mb-2">Property Distribution by City</h5>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">San Francisco</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-20 h-2 bg-gray-200 rounded">
-                            <div className="w-3/4 h-2 bg-blue-500 rounded"></div>
-                          </div>
-                          <span className="text-sm">8 properties</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Oakland</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-20 h-2 bg-gray-200 rounded">
-                            <div className="w-1/3 h-2 bg-green-500 rounded"></div>
-                          </div>
-                          <span className="text-sm">3 properties</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Berkeley</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-20 h-2 bg-gray-200 rounded">
-                            <div className="w-1/4 h-2 bg-purple-500 rounded"></div>
-                          </div>
-                          <span className="text-sm">1 property</span>
-                        </div>
+                  <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Building className="w-8 h-8 text-green-600" />
+                      <div>
+                        <h4 className="font-medium">LLC Registration</h4>
+                        <p className="text-sm text-gray-600">Johnson Properties LLC</p>
                       </div>
                     </div>
+                    <Button variant="outline" size="sm" className="w-full">
+                      View Document
+                    </Button>
+                  </div>
+
+                  <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Shield className="w-8 h-8 text-purple-600" />
+                      <div>
+                        <h4 className="font-medium">Background Check</h4>
+                        <p className="text-sm text-gray-600">Passed 2024</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" className="w-full">
+                      View Report
+                    </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Neighborhood Insights */}
+            {/* Owner Verification */}
+            <OwnerVerification ownerName={propertyData.owner.name} companyName={propertyData.owner.company} />
+
+            {/* FEATURE 3: Owner Analytics Dashboard */}
+            <OwnerAnalyticsDashboard
+              owner={{
+                name: propertyData.owner.name,
+                company: propertyData.owner.company,
+                totalProperties: propertyData.owner.totalProperties,
+                totalValue: propertyData.owner.totalValue,
+                portfolio: propertyData.owner.portfolio,
+              }}
+            />
+
+            {/* Enhanced Neighborhood Insights */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="w-5 h-5" />
-                  Neighborhood Insights
+                  Live Neighborhood Data
                 </CardTitle>
-                <CardDescription>Live data from verified sources</CardDescription>
+                <CardDescription>Real-time data from Google Maps & Census APIs</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div>
-                    <h4 className="font-semibold mb-3 flex items-center gap-2">
-                      <School className="w-4 h-4 text-blue-600" />
-                      Schools
-                    </h4>
-                    <ul className="space-y-2">
-                      {propertyData.neighborhood.schools.map((school, index) => (
-                        <li key={index} className="text-sm">
-                          <div className="font-medium">{school.name}</div>
-                          <div className="text-gray-600">
-                            Rating: {school.rating} • {school.distance}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
+                {loading ? (
+                  <div className="text-center py-8">Loading neighborhood data...</div>
+                ) : neighborhoodData ? (
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <div>
+                      <h4 className="font-semibold mb-3 flex items-center gap-2">
+                        <School className="w-4 h-4 text-blue-600" />
+                        Schools Nearby
+                      </h4>
+                      <ul className="space-y-2">
+                        {neighborhoodData.schools?.slice(0, 3).map((school: any, index: number) => (
+                          <li key={index} className="text-sm text-gray-600">
+                            <div className="font-medium">{school.name}</div>
+                            <div className="text-xs">
+                              Rating: {school.rating} • {school.distance}
+                            </div>
+                          </li>
+                        )) || <li className="text-sm text-gray-500">No schools found</li>}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-3 flex items-center gap-2">
+                        <Hospital className="w-4 h-4 text-red-600" />
+                        Healthcare
+                      </h4>
+                      <ul className="space-y-2">
+                        {neighborhoodData.hospitals?.slice(0, 3).map((hospital: any, index: number) => (
+                          <li key={index} className="text-sm text-gray-600">
+                            <div className="font-medium">{hospital.name}</div>
+                            <div className="text-xs">
+                              Rating: {hospital.rating} • {hospital.distance}
+                            </div>
+                          </li>
+                        )) || <li className="text-sm text-gray-500">No hospitals found</li>}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-3 flex items-center gap-2">
+                        <Train className="w-4 h-4 text-green-600" />
+                        Transportation
+                      </h4>
+                      <ul className="space-y-2">
+                        {neighborhoodData.transit?.slice(0, 3).map((station: any, index: number) => (
+                          <li key={index} className="text-sm text-gray-600">
+                            <div className="font-medium">{station.name}</div>
+                            <div className="text-xs">{station.distance}</div>
+                          </li>
+                        )) || <li className="text-sm text-gray-500">No transit found</li>}
+                      </ul>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold mb-3 flex items-center gap-2">
-                      <Hospital className="w-4 h-4 text-red-600" />
-                      Healthcare
-                    </h4>
-                    <ul className="space-y-2">
-                      {propertyData.neighborhood.hospitals.map((hospital, index) => (
-                        <li key={index} className="text-sm">
-                          <div className="font-medium">{hospital.name}</div>
-                          <div className="text-gray-600">
-                            Rating: {hospital.rating} • {hospital.distance}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-3 flex items-center gap-2">
-                      <Train className="w-4 h-4 text-green-600" />
-                      Transportation
-                    </h4>
-                    <ul className="space-y-2">
-                      {propertyData.neighborhood.transit.map((transport, index) => (
-                        <li key={index} className="text-sm">
-                          <div className="font-medium">{transport.name}</div>
-                          <div className="text-gray-600">{transport.distance}</div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">Unable to load neighborhood data</div>
+                )}
               </CardContent>
             </Card>
 
-            {/* Community Reviews & Comments */}
+            {/* Comments Section */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="w-5 h-5" />
                   Community Reviews & Comments
                 </CardTitle>
-                <CardDescription>Verified reviews from real tenants</CardDescription>
               </CardHeader>
               <CardContent>
                 {/* Add Comment */}
                 <div className="mb-6">
                   <Label htmlFor="comment" className="text-sm font-medium mb-2 block">
-                    Share your experience with this property or owner
+                    Share your experience with this property
                   </Label>
                   <div className="flex gap-2">
                     <Textarea
                       id="comment"
-                      placeholder="Help others avoid scams - share your experience with this verified owner..."
+                      placeholder="Write a comment about this property or the owner..."
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       className="flex-1"
@@ -506,12 +443,6 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="font-medium">{comment.user}</span>
-                          {comment.verified && (
-                            <Badge className="bg-green-100 text-green-800 text-xs">
-                              <CheckCircle className="w-3 h-3 mr-1" />
-                              Verified Tenant
-                            </Badge>
-                          )}
                           <div className="flex items-center gap-1">
                             {[...Array(comment.rating)].map((_, i) => (
                               <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
@@ -533,8 +464,7 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
             {/* Contact Owner */}
             <Card>
               <CardHeader>
-                <CardTitle>Contact Verified Owner</CardTitle>
-                <CardDescription>Safe to contact - identity verified</CardDescription>
+                <CardTitle>Contact Owner</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Button className="w-full">
@@ -583,30 +513,34 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                   <div className="mt-6">
                     <h4 className="font-medium mb-3">Recent Q&A</h4>
                     <div className="space-y-3">
-                      {propertyData.qna.map((qa) => (
-                        <div key={qa.id} className="bg-gray-50 rounded-lg p-3">
-                          <p className="text-sm font-medium mb-1">Q: {qa.question}</p>
-                          <p className="text-sm text-gray-600 mb-2">A: {qa.answer}</p>
-                          <div className="flex justify-between text-xs text-gray-500">
-                            <span>Asked by {qa.askedBy}</span>
-                            <span>{qa.answeredDate}</span>
-                          </div>
-                        </div>
-                      ))}
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-sm font-medium mb-1">Q: Are pets allowed?</p>
+                        <p className="text-sm text-gray-600">
+                          A: Yes, cats and small dogs are welcome with a $200 deposit.
+                        </p>
+                        <span className="text-xs text-gray-500">2 days ago</span>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-sm font-medium mb-1">Q: Is parking included?</p>
+                        <p className="text-sm text-gray-600">
+                          A: One parking spot is included, additional spots available for $150/month.
+                        </p>
+                        <span className="text-xs text-gray-500">1 week ago</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Trust Metrics Dashboard */}
+            {/* Enhanced Trust Metrics */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="w-5 h-5" />
-                  Trust & Safety Metrics
+                  Live Trust Metrics
                 </CardTitle>
-                <CardDescription>Comprehensive verification status</CardDescription>
+                <CardDescription>Real-time verification status</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -617,46 +551,24 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span>Identity Verification</span>
-                      <span className="text-green-600 flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" />
-                        Verified
-                      </span>
+                      <span className="text-green-600">✓ Verified</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span>Ownership Documents</span>
-                      <span className="text-green-600 flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" />
-                        Verified
-                      </span>
+                      <span>Ownership Verification</span>
+                      <span className="text-green-600">✓ Verified</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Background Check</span>
-                      <span className="text-green-600 flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" />
-                        Passed
-                      </span>
+                      <span className="text-green-600">✓ Passed</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Professional Profile</span>
+                      <span className="text-green-600">✓ Found</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span>Business Entity</span>
-                      <span className="text-green-600 flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" />
-                        Verified
-                      </span>
+                      <span className="text-green-600">✓ Verified</span>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Community Rating</span>
-                      <span className="text-green-600">4.8/5.0 (24 reviews)</span>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 p-3 bg-green-50 rounded-lg">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Shield className="w-4 h-4 text-green-600" />
-                      <span className="text-sm font-medium text-green-800">Scam-Free Guarantee</span>
-                    </div>
-                    <p className="text-xs text-green-700">
-                      This owner has passed all verification checks. Safe to proceed with rental application.
-                    </p>
                   </div>
                 </div>
               </CardContent>

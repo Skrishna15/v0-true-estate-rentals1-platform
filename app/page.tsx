@@ -1,74 +1,12 @@
-"use client"
-
-import { useState } from "react"
-import { Building, DollarSign, Users, Eye, Shield } from "lucide-react"
+import { Search, Eye, Shield, BarChart3, MessageSquare, FileText, MapPin, Star, Users, Building } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { InteractiveMap } from "@/components/interactive-map"
-import { PropertySearch } from "@/components/property-search"
-
-const mockWealthData = [
-  {
-    id: "1",
-    owner: "Sarah Johnson",
-    totalValue: "$8.2M",
-    properties: 12,
-    locations: ["San Francisco", "Oakland", "Berkeley"],
-    trustScore: 95,
-    recentActivity: "Purchased 2-unit building on Pine St",
-    coordinates: [-122.4194, 37.7749] as [number, number],
-    address: "123 Oak Street, San Francisco, CA",
-  },
-  {
-    id: "2",
-    owner: "Michael Chen",
-    totalValue: "$15.7M",
-    properties: 23,
-    locations: ["Los Angeles", "Santa Monica", "Beverly Hills"],
-    trustScore: 88,
-    recentActivity: "Sold luxury condo in Beverly Hills",
-    coordinates: [-118.2437, 34.0522] as [number, number],
-    address: "456 Pine Avenue, Los Angeles, CA",
-  },
-  {
-    id: "3",
-    owner: "Emily Rodriguez",
-    totalValue: "$6.3M",
-    properties: 8,
-    locations: ["Seattle", "Bellevue", "Redmond"],
-    trustScore: 92,
-    recentActivity: "Acquired apartment complex in Bellevue",
-    coordinates: [-122.3321, 47.6062] as [number, number],
-    address: "789 Maple Drive, Seattle, WA",
-  },
-]
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function HomePage() {
-  const [selectedOwner, setSelectedOwner] = useState<string | null>(null)
-  const [mapProperties, setMapProperties] = useState(mockWealthData)
-
-  const handlePropertySelect = (property: any) => {
-    setSelectedOwner(property.id)
-  }
-
-  const handleSearchResults = (results: any[]) => {
-    const newProperties = results.map((result, index) => ({
-      id: `search-${index}`,
-      owner: result.owner || "Unknown Owner",
-      totalValue: result.value || "N/A",
-      properties: 1,
-      locations: [result.city || "Unknown"],
-      trustScore: Math.floor(Math.random() * 30) + 70,
-      recentActivity: "Recently listed",
-      coordinates: [result.longitude || -122.4194, result.latitude || 37.7749] as [number, number],
-      address: result.address || "Unknown Address",
-    }))
-
-    setMapProperties([...mockWealthData, ...newProperties])
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Header */}
@@ -81,15 +19,25 @@ export default function HomePage() {
               </div>
               <div>
                 <h1 className="font-bold text-xl">TrueEstate</h1>
-                <p className="text-xs text-gray-600">Wealth Map & Owner Verification</p>
+                <p className="text-xs text-gray-600">Transparency in Real Estate</p>
               </div>
             </div>
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="#search" className="text-gray-600 hover:text-blue-600">
-                Search Properties
+              <Link href="/wealth-map" className="flex items-center gap-2 text-gray-600 hover:text-blue-600">
+                <Eye className="w-4 h-4" />
+                Wealth Map
               </Link>
-              <Link href="#about" className="text-gray-600 hover:text-blue-600">
+              <Link href="/properties" className="text-gray-600 hover:text-blue-600">
+                Property Search
+              </Link>
+              <Link href="/about" className="text-gray-600 hover:text-blue-600">
                 About
+              </Link>
+              <Link href="/saved" className="text-gray-600 hover:text-blue-600">
+                Saved
+              </Link>
+              <Link href="/signin" className="text-gray-600 hover:text-blue-600">
+                Sign In
               </Link>
               <Button>Get Started</Button>
             </nav>
@@ -97,8 +45,8 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section - Problem Statement */}
-      <section className="container mx-auto px-4 py-12 text-center">
+      {/* Hero Section */}
+      <section className="container mx-auto px-4 py-16 text-center">
         <div className="mb-6">
           <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-full text-sm mb-8">
             <Shield className="w-4 h-4" />
@@ -106,236 +54,255 @@ export default function HomePage() {
           </div>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-bold mb-6">
-          Stop Rental Scams. <span className="text-blue-600">Verify Property Owners.</span>
+        <h1 className="text-5xl md:text-6xl font-bold mb-6">
+          Stop Rental Scams. <span className="text-blue-600">Verify Every Owner.</span>
         </h1>
 
-        <p className="text-xl text-gray-600 mb-8 max-w-4xl mx-auto">
-          In the current rental ecosystem, there's a significant lack of transparency regarding property ownership and
-          landlord credibility. Our wealth mapping and verification system helps you make informed decisions with
-          verified ownership data and trust metrics.
+        <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          The rental market lacks transparency. Fake listings, unverified owners, and hidden wealth structures put
+          renters and investors at risk. TrueEstate provides verified ownership data, trust scores, and wealth mapping
+          to make informed decisions.
         </p>
 
-        <Button size="lg" className="mb-8">
+        <Button size="lg" className="mb-12">
           <Eye className="w-5 h-5 mr-2" />
-          Explore Wealth Map Below
+          Explore Wealth Map
         </Button>
+
+        {/* Search Bar */}
+        <div className="max-w-2xl mx-auto">
+          <div className="relative">
+            <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Input
+              placeholder="Search any property address to verify ownership..."
+              className="pl-12 pr-16 py-4 text-lg rounded-xl border-2"
+            />
+            <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-lg">
+              <Search className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
       </section>
 
-      {/* Main Wealth Map Section */}
-      <section className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-4">Real Estate Wealth Map</h2>
-          <p className="text-gray-600 mb-6">
-            Visualize property ownership patterns and verify landlord credibility with real-time data
-          </p>
-
-          {/* Enhanced Search */}
-          <PropertySearch onResults={handleSearchResults} />
+      {/* Featured Properties with Trust Scores */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">Verified Properties</h2>
+          <p className="text-gray-600">Properties with verified ownership and trust scores</p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Interactive Map - Primary Feature */}
-          <div className="lg:col-span-2">
-            <Card className="h-96 lg:h-[600px]">
-              <CardContent className="p-0 h-full">
-                <InteractiveMap properties={mapProperties} onPropertySelect={handlePropertySelect} />
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Trust & Verification Rankings */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="w-5 h-5" />
-                  Verified Property Owners
-                </CardTitle>
-                <CardDescription>Ranked by trust score and verification status</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {mapProperties
-                    .sort((a, b) => b.trustScore - a.trustScore)
-                    .slice(0, 5)
-                    .map((owner, index) => (
-                      <div
-                        key={owner.id}
-                        className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                          selectedOwner === owner.id ? "bg-blue-50 border-blue-200" : "hover:bg-gray-50"
-                        }`}
-                        onClick={() => setSelectedOwner(selectedOwner === owner.id ? null : owner.id)}
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h4 className="font-semibold">{owner.owner}</h4>
-                            <p className="text-sm text-gray-600">#{index + 1} most trusted</p>
-                          </div>
-                          <Badge
-                            className={`${owner.trustScore >= 90 ? "bg-green-500" : owner.trustScore >= 80 ? "bg-yellow-500" : "bg-red-500"} text-white`}
-                          >
-                            <Shield className="w-3 h-3 mr-1" />
-                            {owner.trustScore}% Trust
-                          </Badge>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 text-sm mb-2">
-                          <div>
-                            <span className="text-gray-500">Portfolio Value:</span>
-                            <div className="font-semibold text-green-600">{owner.totalValue}</div>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">Properties:</span>
-                            <div className="font-semibold">{owner.properties}</div>
-                          </div>
-                        </div>
-                        <div className="text-xs text-gray-600 mb-2">
-                          <span className="font-medium">Markets:</span> {owner.locations.join(", ")}
-                        </div>
-                        {selectedOwner === owner.id && (
-                          <div className="mt-3 pt-3 border-t">
-                            <p className="text-sm text-gray-600">
-                              <span className="font-medium">Recent Activity:</span> {owner.recentActivity}
-                            </p>
-                            <Link href={`/property/${owner.id}`}>
-                              <Button size="sm" className="mt-2 w-full">
-                                View Properties & Verification
-                              </Button>
-                            </Link>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            {
+              id: 1,
+              address: "123 Oak Street, San Francisco, CA",
+              price: "$4,500/month",
+              owner: "Sarah Johnson",
+              trustScore: 95,
+              verified: true,
+              image: "/placeholder.svg?height=200&width=300",
+              bedrooms: 2,
+              bathrooms: 2,
+            },
+            {
+              id: 2,
+              address: "456 Pine Avenue, Los Angeles, CA",
+              price: "$3,200/month",
+              owner: "Michael Chen",
+              trustScore: 88,
+              verified: true,
+              image: "/placeholder.svg?height=200&width=300",
+              bedrooms: 3,
+              bathrooms: 2,
+            },
+            {
+              id: 3,
+              address: "789 Maple Drive, Seattle, WA",
+              price: "$2,800/month",
+              owner: "Emily Rodriguez",
+              trustScore: 92,
+              verified: true,
+              image: "/placeholder.svg?height=200&width=300",
+              bedrooms: 1,
+              bathrooms: 1,
+            },
+          ].map((property) => (
+            <Link key={property.id} href={`/property/${property.id}`}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <div className="relative">
+                  <img
+                    src={property.image || "/placeholder.svg"}
+                    alt={property.address}
+                    className="w-full h-48 object-cover rounded-t-lg"
+                  />
+                  {/* Trust Score Badge */}
+                  <div className="absolute top-3 right-3">
+                    <Badge
+                      className={`${property.trustScore >= 90 ? "bg-green-500" : property.trustScore >= 80 ? "bg-yellow-500" : "bg-red-500"} text-white`}
+                    >
+                      <Shield className="w-3 h-3 mr-1" />
+                      {property.trustScore}% Trust
+                    </Badge>
+                  </div>
+                  {property.verified && (
+                    <div className="absolute top-3 left-3">
+                      <Badge className="bg-blue-500 text-white">
+                        <FileText className="w-3 h-3 mr-1" />
+                        Verified
+                      </Badge>
+                    </div>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Trust & Verification Stats */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5" />
-                  Verification Statistics
-                </CardTitle>
-                <CardDescription>Live transparency metrics</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Verified Owners</span>
-                    <span className="font-semibold text-green-600">
-                      {mapProperties.filter((p) => p.trustScore >= 80).length}
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold text-lg">{property.price}</h3>
+                    <div className="flex items-center gap-1 text-sm text-gray-600">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      4.8
+                    </div>
+                  </div>
+                  <p className="text-gray-600 mb-3">{property.address}</p>
+                  <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+                    <span>
+                      {property.bedrooms} bed • {property.bathrooms} bath
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Total Properties Tracked</span>
-                    <span className="font-semibold">{mapProperties.reduce((acc, p) => acc + p.properties, 0)}</span>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="w-6 h-6">
+                      <AvatarImage src="/placeholder-user.jpg" />
+                      <AvatarFallback>
+                        {property.owner
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm text-gray-600">Owner: {property.owner}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Average Trust Score</span>
-                    <span className="font-semibold text-blue-600">
-                      {Math.round(mapProperties.reduce((acc, p) => acc + p.trustScore, 0) / mapProperties.length)}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Scam Prevention Rate</span>
-                    <span className="font-semibold text-green-600">98.5%</span>
-                  </div>
-                </div>
-              </CardContent>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* The Problem Section */}
+      <section className="bg-red-50 py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4 text-red-800">The Transparency Crisis</h2>
+          <p className="text-red-700 mb-12 max-w-3xl mx-auto">
+            Renters lose millions to scams. Investors can't verify ownership. The system lacks accountability.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="p-6 border-red-200">
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="font-semibold mb-2 text-red-800">$1.2B Lost to Rental Scams</h3>
+              <p className="text-red-600 text-sm">Fake listings and unverified owners cost renters billions annually</p>
             </Card>
 
-            {/* Problem Solution Features */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Trust & Verification
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Identity Verification</span>
-                    <Badge className="bg-green-100 text-green-800">Active</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Ownership Documents</span>
-                    <Badge className="bg-green-100 text-green-800">Verified</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Background Checks</span>
-                    <Badge className="bg-green-100 text-green-800">Complete</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Community Reviews</span>
-                    <Badge className="bg-blue-100 text-blue-800">Live</Badge>
-                  </div>
-                </div>
-              </CardContent>
+            <Card className="p-6 border-red-200">
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Eye className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="font-semibold mb-2 text-red-800">Hidden Ownership Structures</h3>
+              <p className="text-red-600 text-sm">Complex LLCs and shell companies obscure true property controllers</p>
+            </Card>
+
+            <Card className="p-6 border-red-200">
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Users className="w-6 h-6 text-red-600" />
+              </div>
+              <h3 className="font-semibold mb-2 text-red-800">No Landlord Accountability</h3>
+              <p className="text-red-600 text-sm">
+                No centralized system to verify landlord credibility or track performance
+              </p>
             </Card>
           </div>
         </div>
       </section>
 
       {/* Trust & Verification Features */}
-      <section className="bg-gray-50 py-16" id="about">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">How We Solve the Transparency Problem</h2>
-          <p className="text-gray-600 mb-12 max-w-3xl mx-auto">
-            Our platform addresses the core issues in rental and real estate transparency through verified data and
-            trust metrics
-          </p>
+      <section className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">Our Solution: 6 Core Trust Features</h2>
+          <p className="text-gray-600">Addressing transparency through verification, analytics, and community</p>
+        </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-6">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-6 h-6 text-green-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Trust Score System</h3>
-              <p className="text-gray-600 text-sm">
-                AI-powered trust scoring combining verification status, reviews, and ownership history for instant
-                credibility assessment
-              </p>
-            </Card>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card className="p-6 text-center border-green-200 bg-green-50">
+            <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold mb-2 text-green-800">1. Trust Score Badges</h3>
+            <p className="text-green-700 text-sm">
+              AI-powered trust scoring combining verification + reviews. Green badge = safe to rent.
+            </p>
+          </Card>
 
-            <Card className="p-6">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Eye className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Wealth Mapping</h3>
-              <p className="text-gray-600 text-sm">
-                Visual property ownership patterns and portfolio insights to understand landlord credibility and
-                investment behavior
-              </p>
-            </Card>
+          <Card className="p-6 text-center border-blue-200 bg-blue-50">
+            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <FileText className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold mb-2 text-blue-800">2. Ownership Validation</h3>
+            <p className="text-blue-700 text-sm">
+              View verified ownership documents and legal proof. No more fake listings.
+            </p>
+          </Card>
 
-            <Card className="p-6">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Users className="w-6 h-6 text-purple-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Community Verification</h3>
-              <p className="text-gray-600 text-sm">
-                Peer reviews, Q&A with owners, and community-driven trust building to prevent scams and verify listings
-              </p>
-            </Card>
-          </div>
+          <Card className="p-6 text-center border-purple-200 bg-purple-50">
+            <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <BarChart3 className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold mb-2 text-purple-800">3. Owner Analytics Dashboard</h3>
+            <p className="text-purple-700 text-sm">
+              Portfolio insights, property distribution, and investment patterns.
+            </p>
+          </Card>
+
+          <Card className="p-6 text-center border-orange-200 bg-orange-50">
+            <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <MapPin className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold mb-2 text-orange-800">4. Neighborhood Insights</h3>
+            <p className="text-orange-700 text-sm">Live data on schools, hospitals, transport from Google Maps API.</p>
+          </Card>
+
+          <Card className="p-6 text-center border-teal-200 bg-teal-50">
+            <div className="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <MessageSquare className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold mb-2 text-teal-800">5. Community Comments</h3>
+            <p className="text-teal-700 text-sm">Social proof through renter reviews and community feedback.</p>
+          </Card>
+
+          <Card className="p-6 text-center border-indigo-200 bg-indigo-50">
+            <div className="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Users className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold mb-2 text-indigo-800">6. Owner Q&A Panel</h3>
+            <p className="text-indigo-700 text-sm">
+              Direct communication with verified owners. Ask questions, get answers.
+            </p>
+          </Card>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="bg-blue-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Stop Falling Victim to Rental Scams</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to Make Informed Decisions?</h2>
           <p className="text-xl mb-8 opacity-90">
-            Join thousands who use TrueEstate to verify property owners and make informed rental decisions
+            Join thousands of users who trust TrueEstate for verified property information
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary">
-              Start Verifying Owners
+              Start Free Trial
             </Button>
             <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-blue-600">
-              View Demo Property
+              View Demo
             </Button>
           </div>
         </div>
@@ -344,7 +311,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -353,30 +320,63 @@ export default function HomePage() {
                 <span className="font-bold text-xl">TrueEstate</span>
               </div>
               <p className="text-gray-400">
-                Solving real estate transparency through verified ownership data and trust metrics.
+                Bringing transparency to real estate through verified data and trust metrics.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Features</h3>
+              <h3 className="font-semibold mb-4">Product</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>Wealth Mapping</li>
-                <li>Owner Verification</li>
-                <li>Trust Scoring</li>
-                <li>Scam Prevention</li>
+                <li>
+                  <Link href="/wealth-map">Wealth Map</Link>
+                </li>
+                <li>
+                  <Link href="/properties">Property Search</Link>
+                </li>
+                <li>
+                  <Link href="/verification">Verification</Link>
+                </li>
+                <li>
+                  <Link href="/analytics">Analytics</Link>
+                </li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Company</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>About</li>
-                <li>Contact</li>
-                <li>Privacy</li>
-                <li>Terms</li>
+                <li>
+                  <Link href="/about">About</Link>
+                </li>
+                <li>
+                  <Link href="/careers">Careers</Link>
+                </li>
+                <li>
+                  <Link href="/press">Press</Link>
+                </li>
+                <li>
+                  <Link href="/contact">Contact</Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-4">Support</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <Link href="/help">Help Center</Link>
+                </li>
+                <li>
+                  <Link href="/privacy">Privacy</Link>
+                </li>
+                <li>
+                  <Link href="/terms">Terms</Link>
+                </li>
+                <li>
+                  <Link href="/security">Security</Link>
+                </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 TrueEstate. Bringing transparency to real estate.</p>
+            <p>&copy; 2024 TrueEstate. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -1,6 +1,9 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useState } from "react"
+import { MapPin, Building, Shield } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 
 interface Property {
   id: string
@@ -17,125 +20,117 @@ interface InteractiveMapProps {
 }
 
 export function InteractiveMap({ properties, onPropertySelect }: InteractiveMapProps) {
-  const mapContainer = useRef<HTMLDivElement>(null)
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
+  const [selectedProperty, setSelectedProperty] = useState<string | null>(null)
 
-  // Fallback to a static map visualization for now
   const handlePropertyClick = (property: Property) => {
-    setSelectedProperty(property)
+    setSelectedProperty(property.id)
     onPropertySelect?.(property)
   }
 
   return (
     <div className="relative w-full h-full bg-gray-100 rounded-lg overflow-hidden">
-      {/* Static Map Placeholder with Interactive Elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-green-100">
-        <div className="absolute inset-0 opacity-20">
-          <svg viewBox="0 0 400 300" className="w-full h-full">
-            {/* Simple map grid */}
-            <defs>
-              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e5e7eb" strokeWidth="1" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
+      {/* Map Header */}
+      <div className="absolute top-4 left-4 bg-white p-2 rounded shadow text-sm z-10">
+        <div className="flex items-center gap-2">
+          <MapPin className="w-4 h-4 text-blue-600" />
+          <span>San Francisco Bay Area</span>
         </div>
+      </div>
 
-        {/* Property Markers */}
-        <div className="absolute inset-0">
-          {properties.map((property, index) => (
-            <div
-              key={property.id}
-              className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 group"
-              style={{
-                left: `${20 + ((index * 15) % 60)}%`,
-                top: `${30 + ((index * 12) % 40)}%`,
-              }}
-              onClick={() => handlePropertyClick(property)}
-            >
-              <div
-                className={`w-6 h-6 rounded-full border-2 border-white shadow-lg transition-all duration-200 group-hover:scale-125 ${
-                  property.trustScore >= 90
-                    ? "bg-green-500"
-                    : property.trustScore >= 80
-                      ? "bg-yellow-500"
-                      : "bg-red-500"
-                }`}
-              />
+      {/* Map Legend */}
+      <div className="absolute top-4 right-4 bg-white p-3 rounded shadow text-xs z-10">
+        <h4 className="font-semibold mb-2">Trust Score</h4>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span>90%+ (Safe)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+            <span>80-89% (Caution)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <span>&lt;80% (Risk)</span>
+          </div>
+        </div>
+      </div>
 
-              {/* Tooltip */}
-              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg p-3 min-w-48 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-                <h4 className="font-semibold text-sm">{property.owner}</h4>
-                <p className="text-xs text-gray-600 mb-1">{property.address}</p>
-                <p className="text-xs font-medium text-green-600">{property.value}</p>
-                <p className="text-xs">Trust Score: {property.trustScore}%</p>
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full">
-                  <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white"></div>
-                </div>
-              </div>
-            </div>
+      {/* Simulated Map Background */}
+      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-green-100 relative">
+        {/* Grid lines to simulate map */}
+        <div className="absolute inset-0 opacity-20">
+          {[...Array(10)].map((_, i) => (
+            <div key={`h-${i}`} className="absolute w-full border-t border-gray-400" style={{ top: `${i * 10}%` }} />
+          ))}
+          {[...Array(10)].map((_, i) => (
+            <div key={`v-${i}`} className="absolute h-full border-l border-gray-400" style={{ left: `${i * 10}%` }} />
           ))}
         </div>
 
-        {/* Map Labels */}
-        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm">
-          <h3 className="font-semibold text-sm mb-2">San Francisco Bay Area</h3>
-          <div className="space-y-1 text-xs">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span>90%+ Trust Score</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-              <span>80-89% Trust Score</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-              <span>Below 80% Trust</span>
-            </div>
-          </div>
-        </div>
+        {/* Property Markers */}
+        {properties.map((property, index) => {
+          const trustColor =
+            property.trustScore >= 90 ? "bg-green-500" : property.trustScore >= 80 ? "bg-yellow-500" : "bg-red-500"
 
-        {/* Selected Property Info */}
-        {selectedProperty && (
-          <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-lg p-4">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h4 className="font-semibold">{selectedProperty.owner}</h4>
-                <p className="text-sm text-gray-600">{selectedProperty.address}</p>
-                <p className="text-sm font-medium text-green-600">{selectedProperty.value}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <div
-                  className={`w-4 h-4 rounded-full ${
-                    selectedProperty.trustScore >= 90
-                      ? "bg-green-500"
-                      : selectedProperty.trustScore >= 80
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
-                  }`}
-                />
-                <span className="text-sm font-medium">{selectedProperty.trustScore}% Trust</span>
-              </div>
-            </div>
-            <button
-              onClick={() => setSelectedProperty(null)}
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+          // Simulate different positions on the map
+          const positions = [
+            { top: "25%", left: "30%" },
+            { top: "45%", left: "60%" },
+            { top: "65%", left: "25%" },
+            { top: "35%", left: "75%" },
+            { top: "55%", left: "45%" },
+            { top: "75%", left: "70%" },
+          ]
+
+          const position = positions[index % positions.length]
+
+          return (
+            <div
+              key={property.id}
+              className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+              style={{ top: position.top, left: position.left }}
+              onClick={() => handlePropertyClick(property)}
             >
-              ×
-            </button>
-          </div>
-        )}
+              {/* Property Marker */}
+              <div
+                className={`w-6 h-6 ${trustColor} rounded-full border-2 border-white shadow-lg hover:scale-110 transition-transform`}
+              >
+                <Building className="w-3 h-3 text-white m-auto mt-0.5" />
+              </div>
 
-        {/* Interactive Features Notice */}
-        <div className="absolute top-4 right-4 bg-blue-50 border border-blue-200 rounded-lg p-3 max-w-xs">
-          <p className="text-xs text-blue-800">
-            <strong>Interactive Map:</strong> Click property markers to view owner details and trust scores. Full Mapbox
-            integration available in production.
-          </p>
-        </div>
+              {/* Property Info Popup */}
+              {selectedProperty === property.id && (
+                <Card className="absolute top-8 left-1/2 transform -translate-x-1/2 w-64 z-20 shadow-xl">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="font-semibold text-sm">{property.owner}</h3>
+                      <Badge className={`${trustColor} text-white text-xs`}>
+                        <Shield className="w-3 h-3 mr-1" />
+                        {property.trustScore}%
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-gray-600 mb-2">{property.address}</p>
+                    <p className="text-sm font-medium text-green-600">{property.value}</p>
+                    <div className="mt-3 pt-2 border-t">
+                      <button className="text-xs text-blue-600 hover:underline">View Full Details →</button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )
+        })}
       </div>
+
+      {/* Map Controls */}
+      <div className="absolute bottom-4 right-4 flex flex-col gap-2">
+        <button className="bg-white p-2 rounded shadow hover:bg-gray-50 text-lg font-bold">+</button>
+        <button className="bg-white p-2 rounded shadow hover:bg-gray-50 text-lg font-bold">−</button>
+      </div>
+
+      {/* Click anywhere to close popup */}
+      {selectedProperty && <div className="absolute inset-0 z-10" onClick={() => setSelectedProperty(null)} />}
     </div>
   )
 }
