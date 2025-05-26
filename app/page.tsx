@@ -1,16 +1,46 @@
-import { Search, Eye, Shield, BarChart3, MessageSquare, FileText, MapPin, Star, Users, Building } from "lucide-react"
+import {
+  Search,
+  Eye,
+  Shield,
+  BarChart3,
+  MessageSquare,
+  FileText,
+  MapPin,
+  Users,
+  Building,
+  DollarSign,
+  AlertTriangle,
+  TrendingUp,
+} from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Card } from "@/components/ui/card"
 
 export default function HomePage() {
+  // In a real app, you'd check authentication status here
+  const isLoggedIn = false // This would come from your auth system
+
+  if (isLoggedIn) {
+    // Redirect to dashboard for logged-in users
+    return <DashboardPage />
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gray-50">
+      {/* Live Alert Banner */}
+      <div className="bg-red-500 text-white py-2 px-4">
+        <div className="container mx-auto flex items-center justify-center gap-2 text-sm">
+          <AlertTriangle className="w-4 h-4" />
+          <span className="font-medium">LIVE ALERT:</span>
+          <span>251 rental scams prevented this month</span>
+          <span>•</span>
+          <span>12 new verified properties added today</span>
+        </div>
+      </div>
+
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b bg-white sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -23,18 +53,11 @@ export default function HomePage() {
               </div>
             </div>
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/wealth-map" className="flex items-center gap-2 text-gray-600 hover:text-blue-600">
-                <Eye className="w-4 h-4" />
-                Wealth Map
-              </Link>
-              <Link href="/properties" className="text-gray-600 hover:text-blue-600">
-                Property Search
-              </Link>
               <Link href="/about" className="text-gray-600 hover:text-blue-600">
                 About
               </Link>
-              <Link href="/saved" className="text-gray-600 hover:text-blue-600">
-                Saved
+              <Link href="/pricing" className="text-gray-600 hover:text-blue-600">
+                Pricing
               </Link>
               <Link href="/signin" className="text-gray-600 hover:text-blue-600">
                 Sign In
@@ -47,262 +70,210 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16 text-center">
-        <div className="mb-6">
-          <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-full text-sm mb-8">
-            <Shield className="w-4 h-4" />
-            Solving Real Estate Transparency Crisis
+        {/* Clarity before Capital Badge */}
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm border border-blue-200">
+            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            Clarity before Capital
           </div>
         </div>
 
-        <h1 className="text-5xl md:text-6xl font-bold mb-6">
-          Stop Rental Scams. <span className="text-blue-600">Verify Every Owner.</span>
+        {/* Main Headline */}
+        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+          Know Your Landlord. <span className="text-blue-600">Protect Your Investment.</span>
         </h1>
 
-        <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-          The rental market lacks transparency. Fake listings, unverified owners, and hidden wealth structures put
-          renters and investors at risk. TrueEstate provides verified ownership data, trust scores, and wealth mapping
-          to make informed decisions.
+        {/* Subtitle */}
+        <p className="text-xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
+          The first real estate intelligence platform that provides complete transparency into property ownership,
+          landlord credibility, and market dynamics. Make informed decisions with verified data before you invest your
+          capital.
         </p>
 
-        <Button size="lg" className="mb-12">
-          <Eye className="w-5 h-5 mr-2" />
-          Explore Wealth Map
-        </Button>
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <Button size="lg" className="bg-blue-600 hover:bg-blue-700 px-8 py-4 text-lg">
+            <Eye className="w-5 h-5 mr-2" />
+            Explore Live Wealth Map
+          </Button>
+          <Button size="lg" variant="outline" className="px-8 py-4 text-lg">
+            <BarChart3 className="w-5 h-5 mr-2" />
+            View Market Analytics
+          </Button>
+        </div>
 
         {/* Search Bar */}
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto mb-4">
           <div className="relative">
             <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
-              placeholder="Search any property address to verify ownership..."
-              className="pl-12 pr-16 py-4 text-lg rounded-xl border-2"
+              placeholder="Enter any address to verify ownership and check for scams..."
+              className="pl-12 pr-16 py-4 text-lg rounded-xl border-2 border-gray-200 focus:border-blue-500"
             />
-            <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-lg">
+            <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-lg bg-blue-600 hover:bg-blue-700">
               <Search className="w-5 h-5" />
             </Button>
           </div>
         </div>
+
+        {/* Search Examples */}
+        <p className="text-gray-500 text-sm">Try: "123 Main St, San Francisco" or "Apartment Brooklyn NY"</p>
       </section>
 
-      {/* Featured Properties with Trust Scores */}
+      {/* Live Market Data Section */}
       <section className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Verified Properties</h2>
-          <p className="text-gray-600">Properties with verified ownership and trust scores</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            {
-              id: 1,
-              address: "123 Oak Street, San Francisco, CA",
-              price: "$4,500/month",
-              owner: "Sarah Johnson",
-              trustScore: 95,
-              verified: true,
-              image: "/placeholder.svg?height=200&width=300",
-              bedrooms: 2,
-              bathrooms: 2,
-            },
-            {
-              id: 2,
-              address: "456 Pine Avenue, Los Angeles, CA",
-              price: "$3,200/month",
-              owner: "Michael Chen",
-              trustScore: 88,
-              verified: true,
-              image: "/placeholder.svg?height=200&width=300",
-              bedrooms: 3,
-              bathrooms: 2,
-            },
-            {
-              id: 3,
-              address: "789 Maple Drive, Seattle, WA",
-              price: "$2,800/month",
-              owner: "Emily Rodriguez",
-              trustScore: 92,
-              verified: true,
-              image: "/placeholder.svg?height=200&width=300",
-              bedrooms: 1,
-              bathrooms: 1,
-            },
-          ].map((property) => (
-            <Link key={property.id} href={`/property/${property.id}`}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="relative">
-                  <img
-                    src={property.image || "/placeholder.svg"}
-                    alt={property.address}
-                    className="w-full h-48 object-cover rounded-t-lg"
-                  />
-                  {/* Trust Score Badge */}
-                  <div className="absolute top-3 right-3">
-                    <Badge
-                      className={`${property.trustScore >= 90 ? "bg-green-500" : property.trustScore >= 80 ? "bg-yellow-500" : "bg-red-500"} text-white`}
-                    >
-                      <Shield className="w-3 h-3 mr-1" />
-                      {property.trustScore}% Trust
-                    </Badge>
-                  </div>
-                  {property.verified && (
-                    <div className="absolute top-3 left-3">
-                      <Badge className="bg-blue-500 text-white">
-                        <FileText className="w-3 h-3 mr-1" />
-                        Verified
-                      </Badge>
-                    </div>
-                  )}
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-lg">{property.price}</h3>
-                    <div className="flex items-center gap-1 text-sm text-gray-600">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      4.8
-                    </div>
-                  </div>
-                  <p className="text-gray-600 mb-3">{property.address}</p>
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
-                    <span>
-                      {property.bedrooms} bed • {property.bathrooms} bath
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Avatar className="w-6 h-6">
-                      <AvatarImage src="/placeholder-user.jpg" />
-                      <AvatarFallback>
-                        {property.owner
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm text-gray-600">Owner: {property.owner}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* The Problem Section */}
-      <section className="bg-red-50 py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4 text-red-800">The Transparency Crisis</h2>
-          <p className="text-red-700 mb-12 max-w-3xl mx-auto">
-            Renters lose millions to scams. Investors can't verify ownership. The system lacks accountability.
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="p-6 border-red-200">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-6 h-6 text-red-600" />
-              </div>
-              <h3 className="font-semibold mb-2 text-red-800">$1.2B Lost to Rental Scams</h3>
-              <p className="text-red-600 text-sm">Fake listings and unverified owners cost renters billions annually</p>
-            </Card>
-
-            <Card className="p-6 border-red-200">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Eye className="w-6 h-6 text-red-600" />
-              </div>
-              <h3 className="font-semibold mb-2 text-red-800">Hidden Ownership Structures</h3>
-              <p className="text-red-600 text-sm">Complex LLCs and shell companies obscure true property controllers</p>
-            </Card>
-
-            <Card className="p-6 border-red-200">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Users className="w-6 h-6 text-red-600" />
-              </div>
-              <h3 className="font-semibold mb-2 text-red-800">No Landlord Accountability</h3>
-              <p className="text-red-600 text-sm">
-                No centralized system to verify landlord credibility or track performance
-              </p>
-            </Card>
+          <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm mb-4">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            LIVE MARKET DATA
           </div>
+          <h2 className="text-3xl font-bold text-gray-900">Real-Time Platform Statistics</h2>
+        </div>
+
+        {/* Statistics Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
+          <Card className="text-center p-6 bg-green-50 border-green-200">
+            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <DollarSign className="w-6 h-6 text-green-600" />
+            </div>
+            <div className="text-3xl font-bold text-green-800 mb-1">$63.7M</div>
+            <div className="text-sm text-green-600">Total Portfolio Value</div>
+          </Card>
+
+          <Card className="text-center p-6 bg-blue-50 border-blue-200">
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Building className="w-6 h-6 text-blue-600" />
+            </div>
+            <div className="text-3xl font-bold text-blue-800 mb-1">5</div>
+            <div className="text-sm text-blue-600">Verified Properties</div>
+          </Card>
+
+          <Card className="text-center p-6 bg-purple-50 border-purple-200">
+            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Users className="w-6 h-6 text-purple-600" />
+            </div>
+            <div className="text-3xl font-bold text-purple-800 mb-1">5</div>
+            <div className="text-sm text-purple-600">Trusted Owners</div>
+          </Card>
+
+          <Card className="text-center p-6 bg-indigo-50 border-indigo-200">
+            <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-6 h-6 text-indigo-600" />
+            </div>
+            <div className="text-3xl font-bold text-indigo-800 mb-1">91%</div>
+            <div className="text-sm text-indigo-600">Avg Trust Score</div>
+          </Card>
+
+          <Card className="text-center p-6 bg-red-50 border-red-200">
+            <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle className="w-6 h-6 text-red-600" />
+            </div>
+            <div className="text-3xl font-bold text-red-800 mb-1">248</div>
+            <div className="text-sm text-red-600">Scams Prevented</div>
+          </Card>
+
+          <Card className="text-center p-6 bg-orange-50 border-orange-200">
+            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <TrendingUp className="w-6 h-6 text-orange-600" />
+            </div>
+            <div className="text-3xl font-bold text-orange-800 mb-1">12</div>
+            <div className="text-sm text-orange-600">New Listings Today</div>
+          </Card>
+        </div>
+
+        {/* Data Update Info */}
+        <div className="text-center text-sm text-gray-500">
+          Data updates every 15 seconds • Last sync: {new Date().toLocaleTimeString()}
         </div>
       </section>
 
       {/* Trust & Verification Features */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Our Solution: 6 Core Trust Features</h2>
-          <p className="text-gray-600">Addressing transparency through verification, analytics, and community</p>
-        </div>
+      <section className="bg-white py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Why TrueEstate?</h2>
+            <p className="text-gray-600">The only platform that verifies every landlord and property owner</p>
+          </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="p-6 text-center border-green-200 bg-green-50">
-            <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold mb-2 text-green-800">1. Trust Score Badges</h3>
-            <p className="text-green-700 text-sm">
-              AI-powered trust scoring combining verification + reviews. Green badge = safe to rent.
-            </p>
-          </Card>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="p-6 text-center border-green-200 bg-green-50">
+              <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2 text-green-800">Trust Score Verification</h3>
+              <p className="text-green-700 text-sm">
+                AI-powered trust scoring combining identity verification, background checks, and community reviews.
+              </p>
+            </Card>
 
-          <Card className="p-6 text-center border-blue-200 bg-blue-50">
-            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <FileText className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold mb-2 text-blue-800">2. Ownership Validation</h3>
-            <p className="text-blue-700 text-sm">
-              View verified ownership documents and legal proof. No more fake listings.
-            </p>
-          </Card>
+            <Card className="p-6 text-center border-blue-200 bg-blue-50">
+              <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2 text-blue-800">Legal Document Verification</h3>
+              <p className="text-blue-700 text-sm">
+                View verified ownership documents, property deeds, and business registrations.
+              </p>
+            </Card>
 
-          <Card className="p-6 text-center border-purple-200 bg-purple-50">
-            <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <BarChart3 className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold mb-2 text-purple-800">3. Owner Analytics Dashboard</h3>
-            <p className="text-purple-700 text-sm">
-              Portfolio insights, property distribution, and investment patterns.
-            </p>
-          </Card>
+            <Card className="p-6 text-center border-purple-200 bg-purple-50">
+              <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2 text-purple-800">Wealth Map Analytics</h3>
+              <p className="text-purple-700 text-sm">
+                Complete portfolio insights, investment patterns, and market analysis.
+              </p>
+            </Card>
 
-          <Card className="p-6 text-center border-orange-200 bg-orange-50">
-            <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <MapPin className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold mb-2 text-orange-800">4. Neighborhood Insights</h3>
-            <p className="text-orange-700 text-sm">Live data on schools, hospitals, transport from Google Maps API.</p>
-          </Card>
+            <Card className="p-6 text-center border-orange-200 bg-orange-50">
+              <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <MapPin className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2 text-orange-800">Live Neighborhood Data</h3>
+              <p className="text-orange-700 text-sm">
+                Real-time insights on schools, transportation, and local amenities.
+              </p>
+            </Card>
 
-          <Card className="p-6 text-center border-teal-200 bg-teal-50">
-            <div className="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <MessageSquare className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold mb-2 text-teal-800">5. Community Comments</h3>
-            <p className="text-teal-700 text-sm">Social proof through renter reviews and community feedback.</p>
-          </Card>
+            <Card className="p-6 text-center border-teal-200 bg-teal-50">
+              <div className="w-12 h-12 bg-teal-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <MessageSquare className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2 text-teal-800">Community Reviews</h3>
+              <p className="text-teal-700 text-sm">
+                Verified renter reviews and direct communication with property owners.
+              </p>
+            </Card>
 
-          <Card className="p-6 text-center border-indigo-200 bg-indigo-50">
-            <div className="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Users className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold mb-2 text-indigo-800">6. Owner Q&A Panel</h3>
-            <p className="text-indigo-700 text-sm">
-              Direct communication with verified owners. Ask questions, get answers.
-            </p>
-          </Card>
+            <Card className="p-6 text-center border-red-200 bg-red-50">
+              <div className="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-semibold mb-2 text-red-800">Scam Prevention</h3>
+              <p className="text-red-700 text-sm">Real-time alerts and verification to protect against rental fraud.</p>
+            </Card>
+          </div>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="bg-blue-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Make Informed Decisions?</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to Invest with Confidence?</h2>
           <p className="text-xl mb-8 opacity-90">
-            Join thousands of users who trust TrueEstate for verified property information
+            Join thousands of investors and renters who trust TrueEstate for verified property intelligence
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary">
+            <Button size="lg" variant="secondary" className="px-8 py-4">
               Start Free Trial
             </Button>
-            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-blue-600">
-              View Demo
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-white border-white hover:bg-white hover:text-blue-600 px-8 py-4"
+            >
+              Schedule Demo
             </Button>
           </div>
         </div>
@@ -320,7 +291,8 @@ export default function HomePage() {
                 <span className="font-bold text-xl">TrueEstate</span>
               </div>
               <p className="text-gray-400">
-                Bringing transparency to real estate through verified data and trust metrics.
+                The first real estate intelligence platform providing complete transparency into property ownership and
+                market dynamics.
               </p>
             </div>
             <div>
@@ -330,13 +302,13 @@ export default function HomePage() {
                   <Link href="/wealth-map">Wealth Map</Link>
                 </li>
                 <li>
-                  <Link href="/properties">Property Search</Link>
-                </li>
-                <li>
                   <Link href="/verification">Verification</Link>
                 </li>
                 <li>
                   <Link href="/analytics">Analytics</Link>
+                </li>
+                <li>
+                  <Link href="/api">API</Link>
                 </li>
               </ul>
             </div>
@@ -380,6 +352,56 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+    </div>
+  )
+}
+
+// Dashboard component for logged-in users
+function DashboardPage() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Dashboard Header */}
+      <header className="border-b bg-white sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Building className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="font-bold text-xl">TrueEstate</h1>
+                <p className="text-xs text-gray-600">Dashboard</p>
+              </div>
+            </div>
+            <nav className="flex items-center gap-6">
+              <Link href="/properties" className="text-gray-600 hover:text-blue-600">
+                Properties
+              </Link>
+              <Link href="/analytics" className="text-gray-600 hover:text-blue-600">
+                Analytics
+              </Link>
+              <Link href="/profile" className="text-gray-600 hover:text-blue-600">
+                Profile
+              </Link>
+              <Button variant="outline">Sign Out</Button>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      {/* Redirect to wealth map for logged-in users */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Welcome back!</h2>
+          <p className="text-gray-600 mb-6">Redirecting you to the live wealth map...</p>
+          <Link href="/wealth-map">
+            <Button size="lg">
+              <Eye className="w-5 h-5 mr-2" />
+              Go to Wealth Map
+            </Button>
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }
