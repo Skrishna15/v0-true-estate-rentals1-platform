@@ -19,7 +19,7 @@ interface InteractiveMapProps {
   onPropertySelect?: (property: Property) => void
 }
 
-const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties, onPropertySelect }) => {
+export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties, onPropertySelect }) => {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<mapboxgl.Map | null>(null)
   const [lng, setLng] = useState(-70.9)
@@ -106,5 +106,3 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties, onPropertyS
     </div>
   )
 }
-
-export default InteractiveMap

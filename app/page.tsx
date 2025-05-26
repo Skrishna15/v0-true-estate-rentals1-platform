@@ -1,270 +1,325 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect } from "react"
 import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { Search, Eye, Shield, Building, MapPin, AlertTriangle, Users, DollarSign } from "lucide-react"
 import Link from "next/link"
-import { Building, Search, User, Bell, Menu, Play, Eye, Clock, MapPin, Star, Share, Bookmark } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
+import { Card } from "@/components/ui/card"
 
 export default function HomePage() {
-  const { data: session } = useSession()
-  const [searchQuery, setSearchQuery] = useState("")
+  const { data: session, status } = useSession()
+  const router = useRouter()
 
-  const featuredProperties = [
-    {
-      id: 1,
-      title: "Luxury Downtown Condo - Owner Verified ✓",
-      thumbnail: "/placeholder.svg?height=180&width=320&query=modern luxury condo downtown",
-      views: "2.3K views",
-      timeAgo: "2 days ago",
-      owner: "Sarah Johnson Properties",
-      trustScore: 95,
-      price: "$3,200/month",
-    },
-    {
-      id: 2,
-      title: "Spacious Family Home - Transparent Pricing",
-      thumbnail: "/placeholder.svg?height=180&width=320&query=family house suburban",
-      views: "1.8K views",
-      timeAgo: "5 days ago",
-      owner: "Metro Real Estate",
-      trustScore: 88,
-      price: "$2,800/month",
-    },
-    {
-      id: 3,
-      title: "Studio Apartment - Perfect for Students",
-      thumbnail: "/placeholder.svg?height=180&width=320&query=studio apartment modern",
-      views: "956 views",
-      timeAgo: "1 week ago",
-      owner: "Campus Housing LLC",
-      trustScore: 92,
-      price: "$1,400/month",
-    },
-    {
-      id: 4,
-      title: "Penthouse with City Views - Premium Location",
-      thumbnail: "/placeholder.svg?height=180&width=320&query=penthouse city view",
-      views: "4.1K views",
-      timeAgo: "3 days ago",
-      owner: "Elite Properties",
-      trustScore: 97,
-      price: "$5,500/month",
-    },
-  ]
-
-  const handleSearch = () => {
-    if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`
+  // Redirect authenticated users to wealth map
+  useEffect(() => {
+    if (status === "authenticated" && session) {
+      router.push("/wealth-map")
     }
+  }, [session, status, router])
+
+  // Show loading or redirect for authenticated users
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  if (status === "authenticated") {
+    return null // Will redirect to wealth map
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* YouTube-style Header */}
-      <header className="border-b bg-white sticky top-0 z-50 px-4 py-3">
-        <div className="flex items-center justify-between max-w-screen-2xl mx-auto">
-          {/* Left: Logo */}
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" className="md:hidden">
-              <Menu className="w-5 h-5" />
-            </Button>
-            <Link href="/" className="flex items-center gap-2">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {/* Header */}
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <Building className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl hidden sm:block">TrueEstate</span>
-            </Link>
-          </div>
-
-          {/* Center: Search */}
-          <div className="flex-1 max-w-2xl mx-4">
-            <div className="flex">
-              <div className="flex-1 relative">
-                <Input
-                  placeholder="Search properties, owners, or locations..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-                  className="rounded-r-none border-r-0 focus:border-blue-500"
-                />
+              <div>
+                <h1 className="font-bold text-xl text-gray-900">TrueEstate</h1>
+                <p className="text-xs text-gray-600">Transparency in Real Estate</p>
               </div>
-              <Button
-                onClick={handleSearch}
-                className="rounded-l-none px-6 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-l-0"
-                variant="outline"
-              >
-                <Search className="w-4 h-4" />
-              </Button>
             </div>
-          </div>
-
-          {/* Right: User Actions */}
-          <div className="flex items-center gap-2">
-            {session ? (
-              <>
-                <Button variant="ghost" size="sm">
-                  <Bell className="w-5 h-5" />
-                </Button>
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src={session.user?.image || ""} />
-                  <AvatarFallback>{session.user?.name?.charAt(0) || "U"}</AvatarFallback>
-                </Avatar>
-              </>
-            ) : (
-              <Button variant="outline" asChild>
-                <Link href="/signin">
-                  <User className="w-4 h-4 mr-2" />
-                  Sign in
-                </Link>
+            <nav className="hidden md:flex items-center gap-6">
+              <Link href="/wealth-map" className="flex items-center gap-2 text-gray-600 hover:text-blue-600">
+                <Eye className="w-4 h-4" />
+                Wealth Map
+              </Link>
+              <Link href="/properties" className="text-gray-600 hover:text-blue-600">
+                Property Search
+              </Link>
+              <Link href="/about" className="text-gray-600 hover:text-blue-600">
+                About
+              </Link>
+              <Link href="/saved" className="text-gray-600 hover:text-blue-600">
+                Saved
+              </Link>
+              <Link href="/signin" className="text-gray-600 hover:text-blue-600">
+                Sign In
+              </Link>
+              <Button asChild>
+                <Link href="/signup">Get Started</Link>
               </Button>
-            )}
+            </nav>
           </div>
         </div>
       </header>
 
-      <div className="flex max-w-screen-2xl mx-auto">
-        {/* Main Content Area */}
-        <div className="flex-1 p-6">
-          {/* Featured Property Video/Content */}
-          <div className="mb-6">
-            <div className="aspect-video bg-black rounded-lg relative overflow-hidden mb-4">
-              <img
-                src="/placeholder.svg?height=480&width=854&query=luxury real estate property tour"
-                alt="Featured Property"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                <Button size="lg" className="rounded-full w-16 h-16">
-                  <Play className="w-8 h-8" />
-                </Button>
-              </div>
-              <Badge className="absolute top-4 left-4 bg-red-600">LIVE TOUR</Badge>
-              <Badge className="absolute top-4 right-4 bg-green-600">VERIFIED OWNER</Badge>
-            </div>
-
-            {/* Property Details */}
-            <div className="space-y-4">
-              <h1 className="text-xl font-semibold">
-                Luxury Downtown Penthouse - Complete Property Tour & Owner Interview
-              </h1>
-
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <span className="flex items-center gap-1">
-                  <Eye className="w-4 h-4" />
-                  2,347 views
-                </span>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />2 days ago
-                </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  Downtown San Francisco
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Avatar className="w-10 h-10">
-                    <AvatarImage src="/placeholder.svg?height=40&width=40&query=professional woman" />
-                    <AvatarFallback>SJ</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="font-medium">Sarah Johnson Properties</div>
-                    <div className="text-sm text-gray-600 flex items-center gap-2">
-                      <span>1.2K subscribers</span>
-                      <Badge variant="secondary" className="text-xs">
-                        <Star className="w-3 h-3 mr-1" />
-                        95% Trust Score
-                      </Badge>
-                    </div>
-                  </div>
-                  <Button variant="outline">Subscribe</Button>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm">
-                    <Share className="w-4 h-4 mr-2" />
-                    Share
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Bookmark className="w-4 h-4 mr-2" />
-                    Save
-                  </Button>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="font-semibold text-lg text-green-600 mb-2">$4,200/month</div>
-                <p className="text-sm text-gray-700">
-                  Experience luxury living in this stunning 2-bedroom penthouse with panoramic city views.
-                  Owner-verified property with complete transparency on pricing, fees, and building amenities. Take a
-                  virtual tour and meet the owner directly through our platform.
-                </p>
-                <Button className="mt-3">Schedule Viewing</Button>
-              </div>
-            </div>
+      {/* Hero Section */}
+      <section className="container mx-auto px-4 py-16 text-center">
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-full text-sm mb-8">
+            <Shield className="w-4 h-4" />
+            Solving Real Estate Transparency Crisis
           </div>
         </div>
 
-        {/* Right Sidebar - Related Properties */}
-        <div className="w-96 p-6 border-l">
-          <h3 className="font-semibold mb-4">Related Properties</h3>
-          <div className="space-y-4">
-            {featuredProperties.map((property) => (
-              <Card key={property.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                <CardContent className="p-3">
-                  <div className="flex gap-3">
-                    <div className="relative">
-                      <img
-                        src={property.thumbnail || "/placeholder.svg"}
-                        alt={property.title}
-                        className="w-40 h-24 object-cover rounded"
-                      />
-                      <Badge className="absolute bottom-1 right-1 text-xs bg-black bg-opacity-70">TOUR</Badge>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm line-clamp-2 mb-1">{property.title}</h4>
-                      <p className="text-xs text-gray-600 mb-1">{property.owner}</p>
-                      <div className="flex items-center gap-2 text-xs text-gray-500">
-                        <span>{property.views}</span>
-                        <span>•</span>
-                        <span>{property.timeAgo}</span>
-                      </div>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="font-semibold text-green-600 text-sm">{property.price}</span>
-                        <Badge variant="secondary" className="text-xs">
-                          {property.trustScore}% Trust
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900">
+          Verify Property Owners. <span className="text-blue-600">Map Hidden Wealth.</span>
+        </h1>
 
-          {/* Quick Actions */}
-          <div className="mt-8 space-y-3">
-            <Button className="w-full" variant="outline" asChild>
-              <Link href="/wealth-map">
-                <MapPin className="w-4 h-4 mr-2" />
-                Explore Wealth Map
-              </Link>
-            </Button>
-            <Button className="w-full" variant="outline" asChild>
-              <Link href="/properties">
-                <Building className="w-4 h-4 mr-2" />
-                Browse All Properties
-              </Link>
+        <p className="text-xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed">
+          Stop falling victim to rental scams and unverified listings. Access verified ownership data, wealth profiles,
+          and trust metrics to make informed real estate decisions.
+        </p>
+
+        <Button size="lg" className="mb-12 bg-blue-600 hover:bg-blue-700" asChild>
+          <Link href="/wealth-map">
+            <Eye className="w-5 h-5 mr-2" />
+            Explore Wealth Map
+          </Link>
+        </Button>
+
+        {/* Search Bar */}
+        <div className="max-w-2xl mx-auto">
+          <div className="relative bg-white rounded-lg shadow-sm border">
+            <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Input
+              placeholder="Search any property address to verify ownership..."
+              className="pl-12 pr-16 py-4 text-lg border-0 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+            <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-md bg-blue-600 hover:bg-blue-700">
+              <Search className="w-5 h-5" />
             </Button>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* The Problem Section */}
+      <section className="bg-white py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4 text-gray-900">The Real Estate Transparency Problem</h2>
+          <p className="text-gray-600 mb-12 max-w-3xl mx-auto text-lg">
+            Current rental and real estate ecosystem lacks critical transparency, putting renters and investors at risk
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <Card className="p-8 border-0 shadow-sm bg-red-50">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <AlertTriangle className="w-8 h-8 text-red-600" />
+              </div>
+              <h3 className="font-semibold mb-3 text-lg text-gray-900">$1.2B Lost to Rental Scams</h3>
+              <p className="text-gray-600">
+                Fake listings and unverified owners cost renters billions annually with no way to verify legitimacy
+              </p>
+            </Card>
+
+            <Card className="p-8 border-0 shadow-sm bg-orange-50">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Eye className="w-8 h-8 text-orange-600" />
+              </div>
+              <h3 className="font-semibold mb-3 text-lg text-gray-900">Hidden Ownership Networks</h3>
+              <p className="text-gray-600">
+                Complex LLCs and shell companies obscure true property controllers and wealth patterns
+              </p>
+            </Card>
+
+            <Card className="p-8 border-0 shadow-sm bg-yellow-50">
+              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Users className="w-8 h-8 text-yellow-600" />
+              </div>
+              <h3 className="font-semibold mb-3 text-lg text-gray-900">No Landlord Credibility Data</h3>
+              <p className="text-gray-600">
+                Renters can't verify landlord history, response rates, or trustworthiness before signing leases
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust & Verification Features */}
+      <section className="bg-gray-50 py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4 text-gray-900">Trust & Verification System</h2>
+            <p className="text-gray-600 text-lg">
+              Advanced verification and trust scoring for safer real estate transactions
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            <Card className="p-6 text-center border-0 shadow-sm bg-white">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="font-semibold mb-2">Trust Score</h3>
+              <p className="text-gray-600 text-sm">AI-powered trust scoring based on verification + reviews</p>
+            </Card>
+
+            <Card className="p-6 text-center border-0 shadow-sm bg-white">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Building className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="font-semibold mb-2">Ownership Docs</h3>
+              <p className="text-gray-600 text-sm">Verified ownership documents and legal proof</p>
+            </Card>
+
+            <Card className="p-6 text-center border-0 shadow-sm bg-white">
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-6 h-6 text-purple-600" />
+              </div>
+              <h3 className="font-semibold mb-2">Wealth Analytics</h3>
+              <p className="text-gray-600 text-sm">Portfolio insights and investment patterns</p>
+            </Card>
+
+            <Card className="p-6 text-center border-0 shadow-sm bg-white">
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Users className="w-6 h-6 text-orange-600" />
+              </div>
+              <h3 className="font-semibold mb-2">Community</h3>
+              <p className="text-gray-600 text-sm">Reviews, comments, and Q&A with owners</p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="bg-blue-600 text-white py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">Ready to Make Informed Decisions?</h2>
+          <p className="text-xl mb-8 opacity-90">
+            Join thousands of users who trust TrueEstate for verified property information
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" variant="secondary" asChild>
+              <Link href="/signup">Start Free Trial</Link>
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-white border-white hover:bg-white hover:text-blue-600"
+              asChild
+            >
+              <Link href="/wealth-map">View Demo</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <Building className="w-5 h-5 text-white" />
+                </div>
+                <span className="font-bold text-xl">TrueEstate</span>
+              </div>
+              <p className="text-gray-400">
+                Bringing transparency to real estate through verified data and trust metrics.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-4">Product</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <Link href="/wealth-map" className="hover:text-white">
+                    Wealth Map
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/properties" className="hover:text-white">
+                    Property Search
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/verification" className="hover:text-white">
+                    Verification
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/analytics" className="hover:text-white">
+                    Analytics
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-4">Company</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <Link href="/about" className="hover:text-white">
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/careers" className="hover:text-white">
+                    Careers
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/press" className="hover:text-white">
+                    Press
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:text-white">
+                    Contact
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-4">Support</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <Link href="/help" className="hover:text-white">
+                    Help Center
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/privacy" className="hover:text-white">
+                    Privacy
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terms" className="hover:text-white">
+                    Terms
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/security" className="hover:text-white">
+                    Security
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 TrueEstate. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
