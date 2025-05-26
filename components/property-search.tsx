@@ -20,6 +20,9 @@ export function PropertySearch({ onResults }: PropertySearchProps) {
     minPrice: "",
     maxPrice: "",
     bedrooms: "",
+    propertyType: "",
+    amenities: "",
+    proximity: "",
     trustScore: "",
   })
 
@@ -75,7 +78,7 @@ export function PropertySearch({ onResults }: PropertySearchProps) {
         </Button>
       </div>
 
-      {/* Filters */}
+      {/* FEATURE: Advanced Search Filters */}
       <div className="flex flex-wrap gap-4">
         <Select value={filters.minPrice} onValueChange={(value) => setFilters({ ...filters, minPrice: value })}>
           <SelectTrigger className="w-40">
@@ -108,10 +111,51 @@ export function PropertySearch({ onResults }: PropertySearchProps) {
             <SelectValue placeholder="Bedrooms" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="studio">Studio</SelectItem>
             <SelectItem value="1">1 Bed</SelectItem>
             <SelectItem value="2">2 Beds</SelectItem>
             <SelectItem value="3">3 Beds</SelectItem>
-            <SelectItem value="4">4+ Beds</SelectItem>
+            <SelectItem value="4+">4+ Beds</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={filters.propertyType} onValueChange={(value) => setFilters({ ...filters, propertyType: value })}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Property Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="apartment">Apartment</SelectItem>
+            <SelectItem value="house">House</SelectItem>
+            <SelectItem value="condo">Condo</SelectItem>
+            <SelectItem value="townhouse">Townhouse</SelectItem>
+            <SelectItem value="studio">Studio</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={filters.amenities} onValueChange={(value) => setFilters({ ...filters, amenities: value })}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Amenities" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="gym">Gym/Fitness</SelectItem>
+            <SelectItem value="pool">Swimming Pool</SelectItem>
+            <SelectItem value="laundry">In-Unit Laundry</SelectItem>
+            <SelectItem value="parking">Parking</SelectItem>
+            <SelectItem value="pets">Pet Friendly</SelectItem>
+            <SelectItem value="ac">Air Conditioning</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={filters.proximity} onValueChange={(value) => setFilters({ ...filters, proximity: value })}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Near" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="transit">Public Transit</SelectItem>
+            <SelectItem value="schools">Good Schools</SelectItem>
+            <SelectItem value="shopping">Shopping Centers</SelectItem>
+            <SelectItem value="parks">Parks</SelectItem>
+            <SelectItem value="hospitals">Hospitals</SelectItem>
           </SelectContent>
         </Select>
 
@@ -120,9 +164,9 @@ export function PropertySearch({ onResults }: PropertySearchProps) {
             <SelectValue placeholder="Trust Score" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="90">90%+ Trust</SelectItem>
-            <SelectItem value="80">80%+ Trust</SelectItem>
-            <SelectItem value="70">70%+ Trust</SelectItem>
+            <SelectItem value="90+">90%+ Trust</SelectItem>
+            <SelectItem value="80+">80%+ Trust</SelectItem>
+            <SelectItem value="70+">70%+ Trust</SelectItem>
             <SelectItem value="all">All Scores</SelectItem>
           </SelectContent>
         </Select>

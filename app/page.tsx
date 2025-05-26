@@ -53,6 +53,9 @@ export default function HomePage() {
               </div>
             </div>
             <nav className="hidden md:flex items-center gap-6">
+              <Link href="/learn" className="text-gray-600 hover:text-blue-600">
+                Learn
+              </Link>
               <Link href="/about" className="text-gray-600 hover:text-blue-600">
                 About
               </Link>
@@ -68,56 +71,56 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16 text-center">
+      {/* Hero Section - Mobile Optimized */}
+      <section className="container mx-auto px-4 py-8 md:py-16 text-center">
         {/* Clarity before Capital Badge */}
-        <div className="mb-8">
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm border border-blue-200">
+        <div className="mb-6 md:mb-8">
+          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3 md:px-4 py-2 rounded-full text-sm border border-blue-200">
             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
             Clarity before Capital
           </div>
         </div>
 
-        {/* Main Headline */}
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+        {/* Main Headline - Responsive Text */}
+        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
           Know Your Landlord. <span className="text-blue-600">Protect Your Investment.</span>
         </h1>
 
-        {/* Subtitle */}
-        <p className="text-xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
+        {/* Subtitle - Responsive */}
+        <p className="text-lg md:text-xl text-gray-600 mb-8 md:mb-12 max-w-4xl mx-auto leading-relaxed px-4">
           The first real estate intelligence platform that provides complete transparency into property ownership,
           landlord credibility, and market dynamics. Make informed decisions with verified data before you invest your
           capital.
         </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-          <Button size="lg" className="bg-blue-600 hover:bg-blue-700 px-8 py-4 text-lg">
-            <Eye className="w-5 h-5 mr-2" />
+        {/* CTA Buttons - Mobile Stack */}
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center mb-8 md:mb-12 px-4">
+          <Button size="lg" className="bg-blue-600 hover:bg-blue-700 px-6 md:px-8 py-3 md:py-4 text-base md:text-lg">
+            <Eye className="w-4 md:w-5 h-4 md:h-5 mr-2" />
             Explore Live Wealth Map
           </Button>
-          <Button size="lg" variant="outline" className="px-8 py-4 text-lg">
-            <BarChart3 className="w-5 h-5 mr-2" />
+          <Button size="lg" variant="outline" className="px-6 md:px-8 py-3 md:py-4 text-base md:text-lg">
+            <BarChart3 className="w-4 md:w-5 h-4 md:h-5 mr-2" />
             View Market Analytics
           </Button>
         </div>
 
-        {/* Search Bar */}
-        <div className="max-w-3xl mx-auto mb-4">
+        {/* Search Bar - Mobile Optimized */}
+        <div className="max-w-3xl mx-auto mb-4 px-4">
           <div className="relative">
-            <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <MapPin className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 md:w-5 h-4 md:h-5" />
             <Input
               placeholder="Enter any address to verify ownership and check for scams..."
-              className="pl-12 pr-16 py-4 text-lg rounded-xl border-2 border-gray-200 focus:border-blue-500"
+              className="pl-10 md:pl-12 pr-12 md:pr-16 py-3 md:py-4 text-base md:text-lg rounded-xl border-2 border-gray-200 focus:border-blue-500"
             />
-            <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-lg bg-blue-600 hover:bg-blue-700">
-              <Search className="w-5 h-5" />
+            <Button className="absolute right-1 md:right-2 top-1/2 transform -translate-y-1/2 rounded-lg bg-blue-600 hover:bg-blue-700 p-2 md:p-3">
+              <Search className="w-4 md:w-5 h-4 md:h-5" />
             </Button>
           </div>
         </div>
 
         {/* Search Examples */}
-        <p className="text-gray-500 text-sm">Try: "123 Main St, San Francisco" or "Apartment Brooklyn NY"</p>
+        <p className="text-gray-500 text-sm px-4">Try: "123 Main St, San Francisco" or "Apartment Brooklyn NY"</p>
       </section>
 
       {/* Live Market Data Section */}
@@ -130,54 +133,54 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold text-gray-900">Real-Time Platform Statistics</h2>
         </div>
 
-        {/* Statistics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
-          <Card className="text-center p-6 bg-green-50 border-green-200">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <DollarSign className="w-6 h-6 text-green-600" />
+        {/* Statistics Grid - Mobile Responsive */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6 mb-8">
+          <Card className="text-center p-3 md:p-6 bg-green-50 border-green-200">
+            <div className="w-8 md:w-12 h-8 md:h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-4">
+              <DollarSign className="w-4 md:w-6 h-4 md:h-6 text-green-600" />
             </div>
-            <div className="text-3xl font-bold text-green-800 mb-1">$63.7M</div>
-            <div className="text-sm text-green-600">Total Portfolio Value</div>
+            <div className="text-xl md:text-3xl font-bold text-green-800 mb-1">$63.7M</div>
+            <div className="text-xs md:text-sm text-green-600">Total Portfolio Value</div>
           </Card>
 
-          <Card className="text-center p-6 bg-blue-50 border-blue-200">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Building className="w-6 h-6 text-blue-600" />
+          <Card className="text-center p-3 md:p-6 bg-blue-50 border-blue-200">
+            <div className="w-8 md:w-12 h-8 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-4">
+              <Building className="w-4 md:w-6 h-4 md:h-6 text-blue-600" />
             </div>
-            <div className="text-3xl font-bold text-blue-800 mb-1">5</div>
-            <div className="text-sm text-blue-600">Verified Properties</div>
+            <div className="text-xl md:text-3xl font-bold text-blue-800 mb-1">5</div>
+            <div className="text-xs md:text-sm text-blue-600">Verified Properties</div>
           </Card>
 
-          <Card className="text-center p-6 bg-purple-50 border-purple-200">
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Users className="w-6 h-6 text-purple-600" />
+          <Card className="text-center p-3 md:p-6 bg-purple-50 border-purple-200">
+            <div className="w-8 md:w-12 h-8 md:h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-4">
+              <Users className="w-4 md:w-6 h-4 md:h-6 text-purple-600" />
             </div>
-            <div className="text-3xl font-bold text-purple-800 mb-1">5</div>
-            <div className="text-sm text-purple-600">Trusted Owners</div>
+            <div className="text-xl md:text-3xl font-bold text-purple-800 mb-1">5</div>
+            <div className="text-xs md:text-sm text-purple-600">Trusted Owners</div>
           </Card>
 
-          <Card className="text-center p-6 bg-indigo-50 border-indigo-200">
-            <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-6 h-6 text-indigo-600" />
+          <Card className="text-center p-3 md:p-6 bg-indigo-50 border-indigo-200">
+            <div className="w-8 md:w-12 h-8 md:h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-4">
+              <Shield className="w-4 md:w-6 h-4 md:h-6 text-indigo-600" />
             </div>
-            <div className="text-3xl font-bold text-indigo-800 mb-1">91%</div>
-            <div className="text-sm text-indigo-600">Avg Trust Score</div>
+            <div className="text-xl md:text-3xl font-bold text-indigo-800 mb-1">91%</div>
+            <div className="text-xs md:text-sm text-indigo-600">Avg Trust Score</div>
           </Card>
 
-          <Card className="text-center p-6 bg-red-50 border-red-200">
-            <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <AlertTriangle className="w-6 h-6 text-red-600" />
+          <Card className="text-center p-3 md:p-6 bg-red-50 border-red-200">
+            <div className="w-8 md:w-12 h-8 md:h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-4">
+              <AlertTriangle className="w-4 md:w-6 h-4 md:h-6 text-red-600" />
             </div>
-            <div className="text-3xl font-bold text-red-800 mb-1">248</div>
-            <div className="text-sm text-red-600">Scams Prevented</div>
+            <div className="text-xl md:text-3xl font-bold text-red-800 mb-1">248</div>
+            <div className="text-xs md:text-sm text-red-600">Scams Prevented</div>
           </Card>
 
-          <Card className="text-center p-6 bg-orange-50 border-orange-200">
-            <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-6 h-6 text-orange-600" />
+          <Card className="text-center p-3 md:p-6 bg-orange-50 border-orange-200">
+            <div className="w-8 md:w-12 h-8 md:h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-2 md:mb-4">
+              <TrendingUp className="w-4 md:w-6 h-4 md:h-6 text-orange-600" />
             </div>
-            <div className="text-3xl font-bold text-orange-800 mb-1">12</div>
-            <div className="text-sm text-orange-600">New Listings Today</div>
+            <div className="text-xl md:text-3xl font-bold text-orange-800 mb-1">12</div>
+            <div className="text-xs md:text-sm text-orange-600">New Listings Today</div>
           </Card>
         </div>
 

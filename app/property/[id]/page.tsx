@@ -16,6 +16,7 @@ import {
   Phone,
   Mail,
   Calendar,
+  Eye,
 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -225,6 +226,56 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
               </CardContent>
             </Card>
 
+            {/* FEATURE: Virtual Tour Integration */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Eye className="w-5 h-5" />
+                  Virtual Property Tour
+                </CardTitle>
+                <CardDescription>Explore this property with our 360° virtual tour</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="relative bg-gray-100 rounded-lg overflow-hidden h-64">
+                    <img
+                      src="/placeholder.svg?height=300&width=400&text=360°+Virtual+Tour"
+                      alt="Virtual Tour"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                      <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                        <Eye className="w-5 h-5 mr-2" />
+                        Start Virtual Tour
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-semibold mb-2">Tour Highlights</h4>
+                      <ul className="space-y-2 text-sm text-gray-600">
+                        <li>• Living room with city views</li>
+                        <li>• Modern kitchen with granite countertops</li>
+                        <li>• Master bedroom with walk-in closet</li>
+                        <li>• Updated bathroom with subway tile</li>
+                        <li>• Private balcony overlooking the park</li>
+                      </ul>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm">
+                        <Calendar className="w-4 h-4 mr-2" />
+                        Schedule In-Person Tour
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Phone className="w-4 h-4 mr-2" />
+                        Video Call Tour
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* FEATURE 1: Trust Score Badge - Prominent Display */}
             <Card className="border-green-200 bg-green-50">
               <CardContent className="p-6">
@@ -397,60 +448,109 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
               </CardContent>
             </Card>
 
-            {/* Comments Section */}
+            {/* FEATURE: Enhanced Property Reviews */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="w-5 h-5" />
-                  Community Reviews & Comments
+                  Verified Renter Reviews
                 </CardTitle>
+                <CardDescription>Reviews from verified renters who lived in this property</CardDescription>
               </CardHeader>
               <CardContent>
-                {/* Add Comment */}
-                <div className="mb-6">
-                  <Label htmlFor="comment" className="text-sm font-medium mb-2 block">
-                    Share your experience with this property
+                {/* Review Summary */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">4.8</div>
+                    <div className="text-sm text-gray-600">Overall Rating</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-600">4.9</div>
+                    <div className="text-sm text-gray-600">Landlord Response</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-purple-600">4.7</div>
+                    <div className="text-sm text-gray-600">Property Condition</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-orange-600">4.8</div>
+                    <div className="text-sm text-gray-600">Neighborhood</div>
+                  </div>
+                </div>
+
+                {/* Add Review Form */}
+                <div className="mb-6 p-4 border rounded-lg">
+                  <Label htmlFor="review" className="text-sm font-medium mb-2 block">
+                    Share your experience (verified renters only)
                   </Label>
-                  <div className="flex gap-2">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm">Rate this property:</span>
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className="w-5 h-5 text-yellow-400 fill-yellow-400 cursor-pointer hover:scale-110"
+                          />
+                        ))}
+                      </div>
+                    </div>
                     <Textarea
-                      id="comment"
-                      placeholder="Write a comment about this property or the owner..."
+                      id="review"
+                      placeholder="Share details about your experience living here, the landlord's responsiveness, property condition, etc..."
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
-                      className="flex-1"
+                      className="min-h-[100px]"
                     />
-                    <Button onClick={handleAddComment} disabled={!newComment.trim()}>
-                      <Send className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button onClick={handleAddComment} disabled={!newComment.trim()}>
+                        <Send className="w-4 h-4 mr-2" />
+                        Submit Review
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        Add Photos
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
                 <Separator className="mb-6" />
 
-                {/* Existing Comments */}
-                <div className="space-y-4">
+                {/* Enhanced Review Display */}
+                <div className="space-y-6">
                   {propertyData.comments.map((comment) => (
-                    <div key={comment.id} className="flex gap-3">
-                      <Avatar className="w-10 h-10">
-                        <AvatarImage src={comment.avatar || "/placeholder.svg"} />
-                        <AvatarFallback>
-                          {comment.user
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium">{comment.user}</span>
-                          <div className="flex items-center gap-1">
-                            {[...Array(comment.rating)].map((_, i) => (
-                              <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                            ))}
+                    <div key={comment.id} className="border rounded-lg p-4">
+                      <div className="flex gap-3">
+                        <Avatar className="w-12 h-12">
+                          <AvatarImage src={comment.avatar || "/placeholder.svg"} />
+                          <AvatarFallback>
+                            {comment.user
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <span className="font-medium">{comment.user}</span>
+                              <Badge className="ml-2 bg-green-100 text-green-800 text-xs">Verified Renter</Badge>
+                            </div>
+                            <span className="text-sm text-gray-500">{comment.date}</span>
                           </div>
-                          <span className="text-sm text-gray-500">{comment.date}</span>
+                          <div className="flex items-center gap-1 mb-2">
+                            {[...Array(comment.rating)].map((_, i) => (
+                              <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                            ))}
+                            <span className="ml-2 text-sm text-gray-600">Lived here 2019-2021</span>
+                          </div>
+                          <p className="text-gray-700 mb-3">{comment.comment}</p>
+                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <button className="hover:text-blue-600">👍 Helpful (12)</button>
+                            <button className="hover:text-blue-600">💬 Reply</button>
+                            <button className="hover:text-blue-600">🚩 Report</button>
+                          </div>
                         </div>
-                        <p className="text-gray-700">{comment.comment}</p>
                       </div>
                     </div>
                   ))}
@@ -482,7 +582,7 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
               </CardContent>
             </Card>
 
-            {/* Ask Owner Q&A */}
+            {/* FEATURE: Enhanced Owner Q&A Panel */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -493,13 +593,32 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
+                  {/* Quick Questions */}
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block">Quick Questions</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setQuestion("Are pets allowed?")}>
+                        🐕 Pets?
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => setQuestion("Is parking included?")}>
+                        🚗 Parking?
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => setQuestion("What utilities are included?")}>
+                        💡 Utilities?
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => setQuestion("What's the lease term?")}>
+                        📋 Lease?
+                      </Button>
+                    </div>
+                  </div>
+
                   <div>
                     <Label htmlFor="question" className="text-sm font-medium mb-2 block">
                       Your Question
                     </Label>
                     <Textarea
                       id="question"
-                      placeholder="Ask about pets, parking, lease terms, etc..."
+                      placeholder="Ask about pets, parking, lease terms, neighborhood, etc..."
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
                     />
@@ -509,23 +628,56 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                     Send Question
                   </Button>
 
-                  {/* Recent Q&A */}
+                  {/* Owner Response Stats */}
+                  <div className="bg-green-50 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-sm font-medium text-green-800">Owner typically responds</span>
+                    </div>
+                    <div className="text-sm text-green-700">Within 2 hours • 98% response rate</div>
+                  </div>
+
+                  {/* Recent Q&A with better formatting */}
                   <div className="mt-6">
                     <h4 className="font-medium mb-3">Recent Q&A</h4>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <div className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-sm font-medium mb-1">Q: Are pets allowed?</p>
-                        <p className="text-sm text-gray-600">
-                          A: Yes, cats and small dogs are welcome with a $200 deposit.
-                        </p>
-                        <span className="text-xs text-gray-500">2 days ago</span>
+                        <div className="flex items-start gap-2 mb-2">
+                          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span className="text-xs font-bold text-blue-600">Q</span>
+                          </div>
+                          <p className="text-sm font-medium">Are pets allowed?</p>
+                        </div>
+                        <div className="flex items-start gap-2 ml-8">
+                          <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                            <span className="text-xs font-bold text-green-600">A</span>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">
+                              Yes, cats and small dogs are welcome with a $200 deposit. We have a dog park nearby!
+                            </p>
+                            <span className="text-xs text-gray-500">Answered 2 days ago</span>
+                          </div>
+                        </div>
                       </div>
                       <div className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-sm font-medium mb-1">Q: Is parking included?</p>
-                        <p className="text-sm text-gray-600">
-                          A: One parking spot is included, additional spots available for $150/month.
-                        </p>
-                        <span className="text-xs text-gray-500">1 week ago</span>
+                        <div className="flex items-start gap-2 mb-2">
+                          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span className="text-xs font-bold text-blue-600">Q</span>
+                          </div>
+                          <p className="text-sm font-medium">Is parking included?</p>
+                        </div>
+                        <div className="flex items-start gap-2 ml-8">
+                          <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                            <span className="text-xs font-bold text-green-600">A</span>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">
+                              One parking spot is included. Additional spots available for $150/month.
+                            </p>
+                            <span className="text-xs text-gray-500">Answered 1 week ago</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
