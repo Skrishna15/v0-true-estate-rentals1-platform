@@ -16,6 +16,7 @@ interface Property {
   coordinates: [number, number]
   state: string
   city: string
+  totalValue?: string
 }
 
 interface InteractiveMapProps {
@@ -611,6 +612,23 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
   }
 
   useEffect(() => {
+    // Add CSS for pulsing animation
+    const style = document.createElement("style")
+    style.textContent = `
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+  `
+    document.head.appendChild(style)
+
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
+
+  useEffect(() => {
     if (map.current) return // Initialize map only once
 
     const initializeMap = async () => {
@@ -619,10 +637,15 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
           setIsLoading(true)
           // Fetch Mapbox token from secure server-side API
           const response = await fetch("/api/mapbox-token")
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+
           const data = await response.json()
 
           if (!data.token) {
-            console.error("Failed to get Mapbox token")
+            console.error("Failed to get Mapbox token:", data.error)
             setIsLoading(false)
             return
           }
@@ -662,55 +685,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
               setZoom(Number(map.current.getZoom().toFixed(2)))
             }
           })
-
-          // Add property markers for all states
-          properties.forEach((property) => {
-            const el = document.createElement("div")
-            el.className = "marker"
-            el.style.backgroundColor =
-              property.trustScore >= 90 ? "#10b981" : property.trustScore >= 80 ? "#f59e0b" : "#ef4444"
-            el.style.width = "24px"
-            el.style.height = "24px"
-            el.style.borderRadius = "50%"
-            el.style.cursor = "pointer"
-            el.style.border = "3px solid white"
-            el.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)"
-            el.style.transition = "all 0.2s ease"
-
-            el.addEventListener("mouseenter", () => {
-              el.style.transform = "scale(1.2)"
-            })
-
-            el.addEventListener("mouseleave", () => {
-              el.style.transform = "scale(1)"
-            })
-
-            el.addEventListener("click", () => {
-              onPropertySelect?.(property)
-            })
-
-            const popup = new mapboxgl.Popup({
-              offset: 25,
-              closeButton: true,
-              closeOnClick: false,
-            }).setHTML(
-              `<div class="p-3 min-w-[200px]">
-                <h3 class="font-semibold text-lg mb-1">${property.owner}</h3>
-                <p class="text-sm text-gray-600 mb-1">${property.city}, ${property.state}</p>
-                <p class="text-xs text-gray-500 mb-2">${property.address}</p>
-                <p class="text-lg font-bold text-green-600 mb-2">${property.value}</p>
-                <div class="flex items-center justify-between">
-                  <span class="text-xs text-gray-500">Trust Score:</span>
-                  <span class="text-sm font-semibold ${property.trustScore >= 90 ? "text-green-600" : property.trustScore >= 80 ? "text-yellow-600" : "text-red-600"}">${property.trustScore}%</span>
-                </div>
-                <button class="mt-2 w-full bg-blue-600 text-white text-xs py-1 px-2 rounded hover:bg-blue-700">
-                  View Details
-                </button>
-              </div>`,
-            )
-
-            new mapboxgl.Marker(el).setLngLat(property.coordinates).setPopup(popup).addTo(map.current!)
-          })
         } catch (error) {
           console.error("Error initializing map:", error)
           setIsLoading(false)
@@ -719,7 +693,71 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
     }
 
     initializeMap()
-  }, [lng, lat, zoom, properties, onPropertySelect, mapStyle])
+  }, [lng, lat, zoom, mapStyle])
+
+  useEffect(() => {
+    if (!map.current || isLoading) return
+
+    // Clear existing markers
+    const existingMarkers = document.querySelectorAll(".marker")
+    existingMarkers.forEach((marker) => marker.remove())
+
+    // Add property markers for all properties (including search results)
+    properties.forEach((property) => {
+      const el = document.createElement("div")
+      el.className = "marker"
+      el.style.backgroundColor =
+        property.trustScore >= 90 ? "#10b981" : property.trustScore >= 80 ? "#f59e0b" : "#ef4444"
+      el.style.width = "24px"
+      el.style.height = "24px"
+      el.style.borderRadius = "50%"
+      el.style.cursor = "pointer"
+      el.style.border = "3px solid white"
+      el.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)"
+      el.style.transition = "all 0.2s ease"
+
+      // Add special styling for search results
+      if (property.id.startsWith("search-")) {
+        el.style.border = "3px solid #3b82f6"
+        el.style.animation = "pulse 2s infinite"
+      }
+
+      el.addEventListener("mouseenter", () => {
+        el.style.transform = "scale(1.2)"
+      })
+
+      el.addEventListener("mouseleave", () => {
+        el.style.transform = "scale(1)"
+      })
+
+      el.addEventListener("click", () => {
+        onPropertySelect?.(property)
+      })
+
+      const popup = new mapboxgl.Popup({
+        offset: 25,
+        closeButton: true,
+        closeOnClick: false,
+      }).setHTML(
+        `<div class="p-3 min-w-[200px]">
+        <h3 class="font-semibold text-lg mb-1">${property.owner}</h3>
+        <p class="text-sm text-gray-600 mb-1">${property.city || property.state}, ${property.state}</p>
+        <p class="text-xs text-gray-500 mb-2">${property.address}</p>
+        <p class="text-lg font-bold text-green-600 mb-2">${property.value || property.totalValue}</p>
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-gray-500">Trust Score:</span>
+          <span class="text-sm font-semibold ${property.trustScore >= 90 ? "text-green-600" : property.trustScore >= 80 ? "text-yellow-600" : "text-red-600"}">${property.trustScore}%</span>
+        </div>
+        ${property.id.startsWith("search-") ? '<div class="text-xs text-blue-600 font-medium mt-1">Search Result</div>' : ""}
+        <button class="mt-2 w-full bg-blue-600 text-white text-xs py-1 px-2 rounded hover:bg-blue-700">
+          View Details
+        </button>
+      </div>`,
+      )
+
+      new mapboxgl.Marker(el).setLngLat(property.coordinates).setPopup(popup).addTo(map.current!)
+    })
+  }, [properties, onPropertySelect, isLoading])
 
   const changeMapStyle = (style: string) => {
     if (map.current) {

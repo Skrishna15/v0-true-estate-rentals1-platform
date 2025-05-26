@@ -60,6 +60,11 @@ export function GlobeMap({ className = "" }: GlobeMapProps) {
     const initializeMap = async () => {
       try {
         const response = await fetch("/api/mapbox-token")
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch token: ${response.status}`)
+        }
+
         const data = await response.json()
 
         if (!response.ok || !data.token) {

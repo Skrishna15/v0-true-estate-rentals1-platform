@@ -61,16 +61,17 @@ export default function WealthMapPage() {
   const handleSearchResults = (results: any[]) => {
     const newProperties = results.map((result, index) => ({
       id: `search-${index}`,
-      owner: result.owner || "Unknown Owner",
-      totalValue: result.value || "N/A",
+      owner: result.owner?.name || "Unknown Owner",
+      totalValue: result.details?.price ? `$${(result.details.price / 1000000).toFixed(1)}M` : "N/A",
       properties: 1,
-      locations: [result.city || "Unknown"],
-      trustScore: Math.floor(Math.random() * 30) + 70,
+      locations: [result.address?.city || "Unknown"],
+      trustScore: result.transparencyScore || Math.floor(Math.random() * 30) + 70,
       recentActivity: "Recently listed",
-      coordinates: [result.longitude || -122.4194, result.latitude || 37.7749] as [number, number],
-      address: result.address || "Unknown Address",
+      coordinates: [result.coordinates?.lng || -122.4194, result.coordinates?.lat || 37.7749] as [number, number],
+      address: `${result.address?.street || "Unknown Address"}, ${result.address?.city || ""}, ${result.address?.state || ""}`,
     }))
 
+    // Update both the map properties and the wealth data
     setMapProperties([...mockWealthData, ...newProperties])
   }
 
@@ -175,31 +176,37 @@ export default function WealthMapPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5" />
-                  Top Property Owners
+                  Property Owners ({mapProperties.length})
                 </CardTitle>
-                <CardDescription>Ranked by verified portfolio value</CardDescription>
+                <CardDescription>
+                  {mapProperties.length > mockWealthData.length
+                    ? `Showing ${mapProperties.length - mockWealthData.length} search results + ${mockWealthData.length} featured owners`
+                    : "Ranked by verified portfolio value"}
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-96 overflow-y-auto">
                   {mapProperties
                     .sort(
                       (a, b) =>
                         Number.parseFloat(b.totalValue.replace(/[$M]/g, "")) -
                         Number.parseFloat(a.totalValue.replace(/[$M]/g, "")),
                     )
-                    .slice(0, 5)
                     .map((owner, index) => (
                       <div
                         key={owner.id}
                         className={`p-4 rounded-lg border cursor-pointer transition-colors ${
                           selectedOwner === owner.id ? "bg-blue-50 border-blue-200" : "hover:bg-gray-50"
-                        }`}
+                        } ${owner.id.startsWith("search-") ? "border-l-4 border-l-blue-500" : ""}`}
                         onClick={() => setSelectedOwner(selectedOwner === owner.id ? null : owner.id)}
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div>
                             <h4 className="font-semibold">{owner.owner}</h4>
-                            <p className="text-sm text-gray-600">#{index + 1} by portfolio value</p>
+                            <p className="text-sm text-gray-600">
+                              {owner.id.startsWith("search-") ? "Search Result" : `#${index + 1} by portfolio value`}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">{owner.address}</p>
                           </div>
                           <Badge
                             className={`${owner.trustScore >= 90 ? "bg-green-500" : owner.trustScore >= 80 ? "bg-yellow-500" : "bg-red-500"} text-white`}

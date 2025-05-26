@@ -2,10 +2,11 @@ import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    // Use the secure server-side environment variable (without NEXT_PUBLIC_ prefix)
+    // Use server-side environment variable (not exposed to client)
     const token = process.env.MAPBOX_ACCESS_TOKEN
 
     if (!token) {
+      console.error("MAPBOX_ACCESS_TOKEN not configured in server environment")
       return NextResponse.json({ error: "Mapbox token not configured" }, { status: 500 })
     }
 

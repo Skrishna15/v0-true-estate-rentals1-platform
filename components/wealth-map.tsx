@@ -95,9 +95,18 @@ export function WealthMap() {
     const initializeMap = async () => {
       try {
         const response = await fetch("/api/mapbox-token")
-        const { token } = await response.json()
 
-        mapboxgl.accessToken = token
+        if (!response.ok) {
+          throw new Error(`Failed to fetch token: ${response.status}`)
+        }
+
+        const data = await response.json()
+
+        if (!data.token) {
+          throw new Error("No token received from API")
+        }
+
+        mapboxgl.accessToken = data.token
 
         map.current = new mapboxgl.Map({
           container: mapContainer.current!,
