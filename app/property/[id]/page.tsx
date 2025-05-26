@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import {
   ArrowLeft,
   Shield,
@@ -26,10 +26,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Label } from "@/components/ui/label"
-import { OwnerVerification } from "@/components/owner-verification"
-import { OwnerAnalyticsDashboard } from "@/components/owner-analytics-dashboard"
 
-// Enhanced property data with real API integration
+// Simple property data without database
 const propertyData = {
   id: 1,
   address: "123 Oak Street, San Francisco, CA 94102",
@@ -37,7 +35,6 @@ const propertyData = {
   bedrooms: 2,
   bathrooms: 2,
   sqft: 1200,
-  coordinates: { lat: 37.7749, lng: -122.4194 },
   images: [
     "/placeholder.svg?height=400&width=600",
     "/placeholder.svg?height=400&width=600",
@@ -49,28 +46,8 @@ const propertyData = {
     avatar: "/placeholder-user.jpg",
     trustScore: 95,
     verified: true,
-    joinDate: "2019",
-    totalProperties: 12,
-    totalValue: "$8.2M",
     responseRate: "98%",
     responseTime: "< 2 hours",
-    portfolio: {
-      cities: [
-        { name: "San Francisco", count: 8, value: "$5.2M" },
-        { name: "Oakland", count: 3, value: "$2.1M" },
-        { name: "Berkeley", count: 1, value: "$0.9M" },
-      ],
-      propertyTypes: [
-        { type: "Apartments", count: 7 },
-        { type: "Single Family", count: 3 },
-        { type: "Condos", count: 2 },
-      ],
-      recentActivity: [
-        { action: "Purchased", property: "2-unit building on Pine St", date: "2 weeks ago" },
-        { action: "Renovated", property: "123 Oak Street unit 2A", date: "1 month ago" },
-        { action: "Listed", property: "456 Market Street", date: "2 months ago" },
-      ],
-    },
   },
   comments: [
     {
@@ -95,35 +72,6 @@ const propertyData = {
 export default function PropertyPage({ params }: { params: { id: string } }) {
   const [newComment, setNewComment] = useState("")
   const [question, setQuestion] = useState("")
-  const [neighborhoodData, setNeighborhoodData] = useState<any>(null)
-  const [propertyDetails, setPropertyDetails] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // Fetch real property and neighborhood data
-    const fetchData = async () => {
-      try {
-        const [neighborhoodResponse, propertyResponse] = await Promise.all([
-          fetch(
-            `/api/neighborhood?lat=${propertyData.coordinates.lat}&lng=${propertyData.coordinates.lng}&address=${encodeURIComponent(propertyData.address)}`,
-          ),
-          fetch(`/api/properties?address=${encodeURIComponent(propertyData.address)}`),
-        ])
-
-        const neighborhoodResult = await neighborhoodResponse.json()
-        const propertyResult = await propertyResponse.json()
-
-        setNeighborhoodData(neighborhoodResult)
-        setPropertyDetails(propertyResult)
-      } catch (error) {
-        console.error("Error fetching data:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [])
 
   const handleAddComment = () => {
     if (newComment.trim()) {
@@ -205,28 +153,11 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                     <span>{propertyData.bathrooms} Bathrooms</span>
                     <span>{propertyData.sqft} sq ft</span>
                   </div>
-
-                  {/* Real Property Data */}
-                  {propertyDetails && (
-                    <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                      <h3 className="font-semibold mb-2">Live Property Data</h3>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-gray-600">Market Value:</span>
-                          <div className="font-medium">{propertyDetails.rental?.rent_estimate || "N/A"}</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Last Updated:</span>
-                          <div className="font-medium">Real-time</div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>
 
-            {/* FEATURE: Virtual Tour Integration */}
+            {/* Virtual Tour */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -276,7 +207,7 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
               </CardContent>
             </Card>
 
-            {/* FEATURE 1: Trust Score Badge - Prominent Display */}
+            {/* Trust Score */}
             <Card className="border-green-200 bg-green-50">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -314,174 +245,83 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
               </CardContent>
             </Card>
 
-            {/* FEATURE 2: Ownership Validation Documents */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  Ownership Validation Documents
-                </CardTitle>
-                <CardDescription>Verified legal proof of ownership</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
-                    <div className="flex items-center gap-3 mb-2">
-                      <FileText className="w-8 h-8 text-blue-600" />
-                      <div>
-                        <h4 className="font-medium">Property Deed</h4>
-                        <p className="text-sm text-gray-600">Verified 2023</p>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm" className="w-full">
-                      View Document
-                    </Button>
-                  </div>
-
-                  <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Building className="w-8 h-8 text-green-600" />
-                      <div>
-                        <h4 className="font-medium">LLC Registration</h4>
-                        <p className="text-sm text-gray-600">Johnson Properties LLC</p>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm" className="w-full">
-                      View Document
-                    </Button>
-                  </div>
-
-                  <div className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Shield className="w-8 h-8 text-purple-600" />
-                      <div>
-                        <h4 className="font-medium">Background Check</h4>
-                        <p className="text-sm text-gray-600">Passed 2024</p>
-                      </div>
-                    </div>
-                    <Button variant="outline" size="sm" className="w-full">
-                      View Report
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Owner Verification */}
-            <OwnerVerification ownerName={propertyData.owner.name} companyName={propertyData.owner.company} />
-
-            {/* FEATURE 3: Owner Analytics Dashboard */}
-            <OwnerAnalyticsDashboard
-              owner={{
-                name: propertyData.owner.name,
-                company: propertyData.owner.company,
-                totalProperties: propertyData.owner.totalProperties,
-                totalValue: propertyData.owner.totalValue,
-                portfolio: propertyData.owner.portfolio,
-              }}
-            />
-
-            {/* Enhanced Neighborhood Insights */}
+            {/* Neighborhood Insights */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="w-5 h-5" />
-                  Live Neighborhood Data
+                  Neighborhood Insights
                 </CardTitle>
-                <CardDescription>Real-time data from Google Maps & Census APIs</CardDescription>
+                <CardDescription>Local amenities and community information</CardDescription>
               </CardHeader>
               <CardContent>
-                {loading ? (
-                  <div className="text-center py-8">Loading neighborhood data...</div>
-                ) : neighborhoodData ? (
-                  <div className="grid md:grid-cols-3 gap-6">
-                    <div>
-                      <h4 className="font-semibold mb-3 flex items-center gap-2">
-                        <School className="w-4 h-4 text-blue-600" />
-                        Schools Nearby
-                      </h4>
-                      <ul className="space-y-2">
-                        {neighborhoodData.schools?.slice(0, 3).map((school: any, index: number) => (
-                          <li key={index} className="text-sm text-gray-600">
-                            <div className="font-medium">{school.name}</div>
-                            <div className="text-xs">
-                              Rating: {school.rating} • {school.distance}
-                            </div>
-                          </li>
-                        )) || <li className="text-sm text-gray-500">No schools found</li>}
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-3 flex items-center gap-2">
-                        <Hospital className="w-4 h-4 text-red-600" />
-                        Healthcare
-                      </h4>
-                      <ul className="space-y-2">
-                        {neighborhoodData.hospitals?.slice(0, 3).map((hospital: any, index: number) => (
-                          <li key={index} className="text-sm text-gray-600">
-                            <div className="font-medium">{hospital.name}</div>
-                            <div className="text-xs">
-                              Rating: {hospital.rating} • {hospital.distance}
-                            </div>
-                          </li>
-                        )) || <li className="text-sm text-gray-500">No hospitals found</li>}
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-3 flex items-center gap-2">
-                        <Train className="w-4 h-4 text-green-600" />
-                        Transportation
-                      </h4>
-                      <ul className="space-y-2">
-                        {neighborhoodData.transit?.slice(0, 3).map((station: any, index: number) => (
-                          <li key={index} className="text-sm text-gray-600">
-                            <div className="font-medium">{station.name}</div>
-                            <div className="text-xs">{station.distance}</div>
-                          </li>
-                        )) || <li className="text-sm text-gray-500">No transit found</li>}
-                      </ul>
-                    </div>
+                <div className="grid md:grid-cols-3 gap-6">
+                  <div>
+                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      <School className="w-4 h-4 text-blue-600" />
+                      Schools Nearby
+                    </h4>
+                    <ul className="space-y-2">
+                      <li className="text-sm text-gray-600">
+                        <div className="font-medium">Lincoln Elementary</div>
+                        <div className="text-xs">Rating: 9/10 • 0.3 miles</div>
+                      </li>
+                      <li className="text-sm text-gray-600">
+                        <div className="font-medium">Roosevelt Middle School</div>
+                        <div className="text-xs">Rating: 8/10 • 0.7 miles</div>
+                      </li>
+                    </ul>
                   </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">Unable to load neighborhood data</div>
-                )}
+                  <div>
+                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      <Hospital className="w-4 h-4 text-red-600" />
+                      Healthcare
+                    </h4>
+                    <ul className="space-y-2">
+                      <li className="text-sm text-gray-600">
+                        <div className="font-medium">UCSF Medical Center</div>
+                        <div className="text-xs">Rating: 4.5/5 • 1.2 miles</div>
+                      </li>
+                      <li className="text-sm text-gray-600">
+                        <div className="font-medium">Walgreens Pharmacy</div>
+                        <div className="text-xs">Rating: 4.2/5 • 0.4 miles</div>
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      <Train className="w-4 h-4 text-green-600" />
+                      Transportation
+                    </h4>
+                    <ul className="space-y-2">
+                      <li className="text-sm text-gray-600">
+                        <div className="font-medium">Powell St BART</div>
+                        <div className="text-xs">0.5 miles</div>
+                      </li>
+                      <li className="text-sm text-gray-600">
+                        <div className="font-medium">Bus Stop 38</div>
+                        <div className="text-xs">0.1 miles</div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
-            {/* FEATURE: Enhanced Property Reviews */}
+            {/* Property Reviews */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageSquare className="w-5 h-5" />
-                  Verified Renter Reviews
+                  Property Reviews
                 </CardTitle>
-                <CardDescription>Reviews from verified renters who lived in this property</CardDescription>
+                <CardDescription>Reviews from verified renters</CardDescription>
               </CardHeader>
               <CardContent>
-                {/* Review Summary */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">4.8</div>
-                    <div className="text-sm text-gray-600">Overall Rating</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">4.9</div>
-                    <div className="text-sm text-gray-600">Landlord Response</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600">4.7</div>
-                    <div className="text-sm text-gray-600">Property Condition</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-600">4.8</div>
-                    <div className="text-sm text-gray-600">Neighborhood</div>
-                  </div>
-                </div>
-
                 {/* Add Review Form */}
                 <div className="mb-6 p-4 border rounded-lg">
                   <Label htmlFor="review" className="text-sm font-medium mb-2 block">
-                    Share your experience (verified renters only)
+                    Share your experience
                   </Label>
                   <div className="space-y-3">
                     <div className="flex items-center gap-4">
@@ -497,26 +337,21 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                     </div>
                     <Textarea
                       id="review"
-                      placeholder="Share details about your experience living here, the landlord's responsiveness, property condition, etc..."
+                      placeholder="Share details about your experience..."
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       className="min-h-[100px]"
                     />
-                    <div className="flex gap-2">
-                      <Button onClick={handleAddComment} disabled={!newComment.trim()}>
-                        <Send className="w-4 h-4 mr-2" />
-                        Submit Review
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        Add Photos
-                      </Button>
-                    </div>
+                    <Button onClick={handleAddComment} disabled={!newComment.trim()}>
+                      <Send className="w-4 h-4 mr-2" />
+                      Submit Review
+                    </Button>
                   </div>
                 </div>
 
                 <Separator className="mb-6" />
 
-                {/* Enhanced Review Display */}
+                {/* Review Display */}
                 <div className="space-y-6">
                   {propertyData.comments.map((comment) => (
                     <div key={comment.id} className="border rounded-lg p-4">
@@ -532,24 +367,15 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                         </Avatar>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
-                            <div>
-                              <span className="font-medium">{comment.user}</span>
-                              <Badge className="ml-2 bg-green-100 text-green-800 text-xs">Verified Renter</Badge>
-                            </div>
+                            <span className="font-medium">{comment.user}</span>
                             <span className="text-sm text-gray-500">{comment.date}</span>
                           </div>
                           <div className="flex items-center gap-1 mb-2">
                             {[...Array(comment.rating)].map((_, i) => (
                               <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                             ))}
-                            <span className="ml-2 text-sm text-gray-600">Lived here 2019-2021</span>
                           </div>
-                          <p className="text-gray-700 mb-3">{comment.comment}</p>
-                          <div className="flex items-center gap-4 text-sm text-gray-500">
-                            <button className="hover:text-blue-600">👍 Helpful (12)</button>
-                            <button className="hover:text-blue-600">💬 Reply</button>
-                            <button className="hover:text-blue-600">🚩 Report</button>
-                          </div>
+                          <p className="text-gray-700">{comment.comment}</p>
                         </div>
                       </div>
                     </div>
@@ -582,7 +408,7 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
               </CardContent>
             </Card>
 
-            {/* FEATURE: Enhanced Owner Q&A Panel */}
+            {/* Q&A Panel */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -593,7 +419,6 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {/* Quick Questions */}
                   <div>
                     <Label className="text-sm font-medium mb-2 block">Quick Questions</Label>
                     <div className="grid grid-cols-2 gap-2">
@@ -618,7 +443,7 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                     </Label>
                     <Textarea
                       id="question"
-                      placeholder="Ask about pets, parking, lease terms, neighborhood, etc..."
+                      placeholder="Ask about pets, parking, lease terms..."
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
                     />
@@ -636,63 +461,18 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                     </div>
                     <div className="text-sm text-green-700">Within 2 hours • 98% response rate</div>
                   </div>
-
-                  {/* Recent Q&A with better formatting */}
-                  <div className="mt-6">
-                    <h4 className="font-medium mb-3">Recent Q&A</h4>
-                    <div className="space-y-4">
-                      <div className="bg-gray-50 rounded-lg p-3">
-                        <div className="flex items-start gap-2 mb-2">
-                          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-xs font-bold text-blue-600">Q</span>
-                          </div>
-                          <p className="text-sm font-medium">Are pets allowed?</p>
-                        </div>
-                        <div className="flex items-start gap-2 ml-8">
-                          <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                            <span className="text-xs font-bold text-green-600">A</span>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-600">
-                              Yes, cats and small dogs are welcome with a $200 deposit. We have a dog park nearby!
-                            </p>
-                            <span className="text-xs text-gray-500">Answered 2 days ago</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="bg-gray-50 rounded-lg p-3">
-                        <div className="flex items-start gap-2 mb-2">
-                          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-xs font-bold text-blue-600">Q</span>
-                          </div>
-                          <p className="text-sm font-medium">Is parking included?</p>
-                        </div>
-                        <div className="flex items-start gap-2 ml-8">
-                          <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                            <span className="text-xs font-bold text-green-600">A</span>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-600">
-                              One parking spot is included. Additional spots available for $150/month.
-                            </p>
-                            <span className="text-xs text-gray-500">Answered 1 week ago</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Enhanced Trust Metrics */}
+            {/* Trust Metrics */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="w-5 h-5" />
-                  Live Trust Metrics
+                  Trust Metrics
                 </CardTitle>
-                <CardDescription>Real-time verification status</CardDescription>
+                <CardDescription>Verification status</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -712,14 +492,6 @@ export default function PropertyPage({ params }: { params: { id: string } }) {
                     <div className="flex justify-between text-sm">
                       <span>Background Check</span>
                       <span className="text-green-600">✓ Passed</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Professional Profile</span>
-                      <span className="text-green-600">✓ Found</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Business Entity</span>
-                      <span className="text-green-600">✓ Verified</span>
                     </div>
                   </div>
                 </div>
