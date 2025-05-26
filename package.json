@@ -50,6 +50,7 @@
     "input-otp": "1.4.1",
     "kerberos": "latest",
     "lucide-react": "^0.454.0",
+    "mapbox-gl": "latest",
     "mongodb": "latest",
     "mongodb-client-encryption": "latest",
     "next": "15.2.4",

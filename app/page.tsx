@@ -1,12 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Building, Search, TrendingUp, Shield, Eye, Users } from "lucide-react"
+import { Search, TrendingUp, Shield, Eye, Users, Globe } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { EnhancedMap } from "@/components/enhanced-map"
+import { Header } from "@/components/header"
 
 export default function HomePage() {
   const [mapView, setMapView] = useState<"property" | "wealth">("property")
@@ -29,35 +30,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="border-b bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Building className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h1 className="font-bold text-xl">TrueEstate</h1>
-                <p className="text-xs text-gray-600">Clarity before Capital</p>
-              </div>
-            </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/dashboard" className="text-gray-600 hover:text-blue-600">
-                Search Properties
-              </Link>
-              <Link href="/about" className="text-gray-600 hover:text-blue-600">
-                About
-              </Link>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">2</span>
-                </div>
-                <span className="text-sm">AU</span>
-              </div>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-br from-blue-50 to-white">
@@ -86,6 +59,12 @@ export default function HomePage() {
               <Link href="/dashboard">
                 <Eye className="w-5 h-5 mr-2" />
                 Explore Dashboard
+              </Link>
+            </Button>
+            <Button variant="outline" size="lg" asChild>
+              <Link href="/globe">
+                <Globe className="w-5 h-5 mr-2" />
+                3D Globe View
               </Link>
             </Button>
             <Button variant="outline" size="lg" asChild>

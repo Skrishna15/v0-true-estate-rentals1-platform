@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    // Use the non-public environment variable (without NEXT_PUBLIC_ prefix)
+    // Use the secure server-side environment variable (without NEXT_PUBLIC_ prefix)
     const token = process.env.MAPBOX_ACCESS_TOKEN
 
     if (!token) {
