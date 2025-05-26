@@ -1,13 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { Building, DollarSign, TrendingUp, Users, Eye, Shield, AlertTriangle } from "lucide-react"
+import { Building, Search, Filter, Download, Heart, Eye, TrendingUp, MapPin, BarChart3 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { InteractiveMap } from "@/components/interactive-map"
-import { PropertySearch } from "@/components/property-search"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const mockWealthData = [
   {
@@ -46,6 +47,15 @@ const mockWealthData = [
 ]
 
 export default function DashboardPage() {
+  const [activeTab, setActiveTab] = useState("all")
+  const [searchQuery, setSearchQuery] = useState("las vegas")
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
+  const [exportOptions, setExportOptions] = useState({
+    financial: true,
+    location: true,
+    marketData: false,
+    verification: true,
+  })
   const [selectedOwner, setSelectedOwner] = useState<string | null>(null)
   const [mapProperties, setMapProperties] = useState(mockWealthData)
 
@@ -70,12 +80,22 @@ export default function DashboardPage() {
     setMapProperties([...mockWealthData, ...newProperties])
   }
 
+  const handleSearch = () => {
+    console.log("Searching for:", searchQuery)
+    // Add actual search functionality here
+  }
+
+  const handleExport = () => {
+    console.log("Exporting with options:", exportOptions)
+    // Add actual export functionality here
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Live Alert Banner */}
       <div className="bg-red-500 text-white py-2 px-4">
         <div className="container mx-auto flex items-center justify-center gap-2 text-sm">
-          <AlertTriangle className="w-4 h-4" />
+          <Search className="w-4 h-4" />
           <span className="font-medium">LIVE ALERT:</span>
           <span>3 new scam properties detected in your area</span>
           <span>•</span>
@@ -97,20 +117,18 @@ export default function DashboardPage() {
               </div>
             </Link>
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/dashboard" className="font-semibold text-blue-600 flex items-center gap-2">
-                <Eye className="w-4 h-4" />
-                Dashboard
-              </Link>
               <Link href="/properties" className="text-gray-600 hover:text-blue-600">
-                Properties
+                Search Properties
               </Link>
-              <Link href="/analytics" className="text-gray-600 hover:text-blue-600">
-                Analytics
+              <Link href="/about" className="text-gray-600 hover:text-blue-600">
+                About
               </Link>
-              <Link href="/profile" className="text-gray-600 hover:text-blue-600">
-                Profile
-              </Link>
-              <Button variant="outline">Sign Out</Button>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">2</span>
+                </div>
+                <span className="text-sm">AU</span>
+              </div>
             </nav>
           </div>
         </div>
@@ -118,168 +136,366 @@ export default function DashboardPage() {
 
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-4">Live Wealth Map Dashboard</h1>
-          <p className="text-gray-600 mb-6">Real-time property ownership visualization and market intelligence</p>
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-4">Real Estate Intelligence Dashboard</h1>
+          <p className="text-gray-600 mb-8">
+            Real-time property ownership data, trust scores, and market intelligence powered by AI
+          </p>
 
-          {/* Enhanced Search */}
-          <PropertySearch onResults={handleSearchResults} />
+          {/* Tab Navigation */}
+          <div className="flex justify-center gap-2 mb-8">
+            <Button
+              variant={activeTab === "all" ? "default" : "outline"}
+              onClick={() => setActiveTab("all")}
+              className="px-6"
+            >
+              All Results
+            </Button>
+            <Button
+              variant={activeTab === "properties" ? "default" : "outline"}
+              onClick={() => setActiveTab("properties")}
+              className="px-6"
+            >
+              Properties Only
+            </Button>
+            <Button
+              variant={activeTab === "verified" ? "default" : "outline"}
+              onClick={() => setActiveTab("verified")}
+              className="px-6"
+            >
+              Verified Owners
+            </Button>
+          </div>
+
+          {/* Search Bar */}
+          <div className="max-w-4xl mx-auto mb-6">
+            <div className="flex gap-2">
+              <div className="flex-1 relative">
+                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  placeholder="Search by address, city, or neighborhood..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 pr-4 py-3 text-lg"
+                />
+              </div>
+              <Button onClick={handleSearch} size="lg" className="px-8">
+                <Search className="w-5 h-5 mr-2" />
+                Search
+              </Button>
+            </div>
+            <p className="text-sm text-gray-500 mt-2">
+              Try: "123 Main St" or "Sarah Johnson Properties" or "Pacific Real Estate"
+            </p>
+          </div>
+
+          {/* Advanced Filters Toggle */}
+          <Button variant="outline" onClick={() => setShowAdvancedFilters(!showAdvancedFilters)} className="mb-6">
+            <Filter className="w-4 h-4 mr-2" />
+            Advanced Filters
+          </Button>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Interactive Map - Primary Focus */}
-          <div className="lg:col-span-2">
-            <Card className="h-96 lg:h-[600px]">
+        <div className="grid lg:grid-cols-4 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            {/* Search Results */}
+            <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Eye className="w-5 h-5" />
-                  Live Property Map
-                </CardTitle>
-                <CardDescription>Click on markers to view owner details and trust scores</CardDescription>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <CardTitle className="flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5" />
+                      Search Results
+                    </CardTitle>
+                    <Badge>1 properties</Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm">
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <BarChart3 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-4 h-4" />
+                    <span>Sort by:</span>
+                    <Select defaultValue="relevance">
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="relevance">Relevance</SelectItem>
+                        <SelectItem value="price">Price</SelectItem>
+                        <SelectItem value="trust">Trust Score</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <span>Showing 1 of 1 results</span>
+                </div>
               </CardHeader>
-              <CardContent className="p-0 h-full">
-                <InteractiveMap properties={mapProperties} onPropertySelect={handlePropertySelect} />
+              <CardContent>
+                {/* Property Result */}
+                <div className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">las vegas</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-500">Owner:</span>
+                          <div className="font-medium">Sample Owner</div>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Value:</span>
+                          <div className="font-medium text-green-600">$790,857</div>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Trust Score:</span>
+                          <div className="font-medium">99%</div>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Status:</span>
+                          <Badge variant="destructive">Unverified</Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm">
+                        <Heart className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Advanced Real Estate Tools */}
+            <Card className="mt-8">
+              <CardHeader>
+                <CardTitle>Advanced Real Estate Tools</CardTitle>
+                <CardDescription>Professional tools and analytics for informed real estate decisions</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Property Analysis Tools */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5" />
+                    Property Analysis Tools
+                  </h3>
+                  <p className="text-gray-600 mb-4">Compare properties and analyze market trends</p>
+
+                  {/* Property Comparison */}
+                  <Card className="bg-gray-50">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <BarChart3 className="w-5 h-5" />
+                        <h4 className="font-semibold">Property Comparison</h4>
+                      </div>
+                      <p className="text-gray-600 mb-4">Select properties to compare side by side</p>
+                      <div className="text-center py-8">
+                        <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <BarChart3 className="w-8 h-8 text-gray-400" />
+                        </div>
+                        <p className="text-gray-500 mb-2">No properties selected</p>
+                        <p className="text-sm text-gray-400">Click the compare icon on any property to add it here</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Sidebar with Live Data */}
+          {/* Sidebar */}
           <div className="space-y-6">
-            {/* Real-time Stats */}
+            {/* Data Export & Reports */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Download className="w-5 h-5" />
+                  Data Export & Reports
+                </CardTitle>
+                <CardDescription>Generate comprehensive property reports</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Export Format */}
+                <div>
+                  <h4 className="font-medium mb-3">Export Format</h4>
+                  <div className="grid grid-cols-3 gap-2">
+                    <Button variant="default" size="sm" className="bg-black text-white">
+                      <BarChart3 className="w-4 h-4 mr-1" />
+                      CSV
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <span className="text-xs">{"{}"}</span>
+                      JSON
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <span className="text-xs">📄</span>
+                      PDF Report
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Export Scope */}
+                <div>
+                  <h4 className="font-medium mb-3">Export Scope</h4>
+                  <div className="flex items-center gap-2">
+                    <input type="radio" id="all-properties" name="scope" defaultChecked />
+                    <label htmlFor="all-properties" className="text-sm">
+                      All Properties (6)
+                    </label>
+                  </div>
+                </div>
+
+                {/* Include Fields */}
+                <div>
+                  <h4 className="font-medium mb-3">Include Fields</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <Checkbox id="basic-info" checked={true} className="mt-1" />
+                      <div>
+                        <label htmlFor="basic-info" className="font-medium text-sm">
+                          Basic Info
+                        </label>
+                        <p className="text-xs text-gray-500">Address, owner, property type</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Checkbox id="ownership" checked={true} className="mt-1" />
+                      <div>
+                        <label htmlFor="ownership" className="font-medium text-sm">
+                          Ownership
+                        </label>
+                        <p className="text-xs text-gray-500">Owner details, company, portfolio</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        id="financial"
+                        checked={exportOptions.financial}
+                        onCheckedChange={(checked) =>
+                          setExportOptions((prev) => ({ ...prev, financial: checked as boolean }))
+                        }
+                        className="mt-1"
+                      />
+                      <div>
+                        <label htmlFor="financial" className="font-medium text-sm">
+                          Financial
+                        </label>
+                        <p className="text-xs text-gray-500">Value, rent estimates, ROI</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        id="location"
+                        checked={exportOptions.location}
+                        onCheckedChange={(checked) =>
+                          setExportOptions((prev) => ({ ...prev, location: checked as boolean }))
+                        }
+                        className="mt-1"
+                      />
+                      <div>
+                        <label htmlFor="location" className="font-medium text-sm">
+                          Location
+                        </label>
+                        <p className="text-xs text-gray-500">Coordinates, neighborhood, walk score</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        id="market-data"
+                        checked={exportOptions.marketData}
+                        onCheckedChange={(checked) =>
+                          setExportOptions((prev) => ({ ...prev, marketData: checked as boolean }))
+                        }
+                        className="mt-1"
+                      />
+                      <div>
+                        <label htmlFor="market-data" className="font-medium text-sm">
+                          Market Data
+                        </label>
+                        <p className="text-xs text-gray-500">Trends, appreciation, comparables</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        id="verification"
+                        checked={exportOptions.verification}
+                        onCheckedChange={(checked) =>
+                          setExportOptions((prev) => ({ ...prev, verification: checked as boolean }))
+                        }
+                        className="mt-1"
+                      />
+                      <div>
+                        <label htmlFor="verification" className="font-medium text-sm">
+                          Verification
+                        </label>
+                        <p className="text-xs text-gray-500">Trust scores, scam reports</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Button onClick={handleExport} className="w-full bg-black text-white hover:bg-gray-800">
+                  <Download className="w-4 h-4 mr-2" />
+                  Export 6 Properties
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Live Market Intelligence */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5" />
-                  Live Market Stats
+                  Live Market Intelligence
                 </CardTitle>
-                <CardDescription>Updated every 15 seconds</CardDescription>
+                <CardDescription>Real-time market data and trends</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Total Tracked Value</span>
-                    <span className="font-semibold text-green-600">$63.7M</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Active Properties</span>
-                    <span className="font-semibold">{mapProperties.length}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Verified Owners</span>
-                    <span className="font-semibold">{mapProperties.filter((p) => p.trustScore >= 80).length}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Avg Trust Score</span>
-                    <span className="font-semibold text-blue-600">
-                      {Math.round(mapProperties.reduce((acc, p) => acc + p.trustScore, 0) / mapProperties.length)}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Scams Prevented</span>
-                    <span className="font-semibold text-red-600">248</span>
-                  </div>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Total Portfolio Value</span>
+                  <span className="font-semibold text-green-600">$63.7M</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Verified Properties</span>
+                  <span className="font-semibold">5</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Trusted Owners</span>
+                  <span className="font-semibold text-blue-600">5</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Avg Trust Score</span>
+                  <span className="font-semibold text-green-600">91%</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Scams Prevented</span>
+                  <span className="font-semibold text-red-600">534</span>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Top Property Owners */}
+            {/* Saved Properties */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Top Property Owners
+                  <Heart className="w-5 h-5" />
+                  Saved Properties (0)
                 </CardTitle>
-                <CardDescription>Ranked by verified portfolio value</CardDescription>
+                <CardDescription>Your bookmarked properties and notes</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {mapProperties
-                    .sort(
-                      (a, b) =>
-                        Number.parseFloat(b.totalValue.replace(/[$M]/g, "")) -
-                        Number.parseFloat(a.totalValue.replace(/[$M]/g, "")),
-                    )
-                    .slice(0, 5)
-                    .map((owner, index) => (
-                      <div
-                        key={owner.id}
-                        className={`p-4 rounded-lg border cursor-pointer transition-colors ${
-                          selectedOwner === owner.id ? "bg-blue-50 border-blue-200" : "hover:bg-gray-50"
-                        }`}
-                        onClick={() => setSelectedOwner(selectedOwner === owner.id ? null : owner.id)}
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h4 className="font-semibold">{owner.owner}</h4>
-                            <p className="text-sm text-gray-600">#{index + 1} by portfolio value</p>
-                          </div>
-                          <Badge
-                            className={`${owner.trustScore >= 90 ? "bg-green-500" : owner.trustScore >= 80 ? "bg-yellow-500" : "bg-red-500"} text-white`}
-                          >
-                            <Shield className="w-3 h-3 mr-1" />
-                            {owner.trustScore}%
-                          </Badge>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 text-sm mb-2">
-                          <div>
-                            <span className="text-gray-500">Total Value:</span>
-                            <div className="font-semibold text-green-600">{owner.totalValue}</div>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">Properties:</span>
-                            <div className="font-semibold">{owner.properties}</div>
-                          </div>
-                        </div>
-                        <div className="text-xs text-gray-600 mb-2">
-                          <span className="font-medium">Markets:</span> {owner.locations.join(", ")}
-                        </div>
-                        {selectedOwner === owner.id && (
-                          <div className="mt-3 pt-3 border-t">
-                            <p className="text-sm text-gray-600">
-                              <span className="font-medium">Recent Activity:</span> {owner.recentActivity}
-                            </p>
-                            <Button size="sm" className="mt-2 w-full">
-                              View Full Portfolio
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* API Status */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="w-5 h-5" />
-                  Data Sources
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">ATTOM Data</span>
-                    <Badge className="bg-green-100 text-green-800">Active</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Zillow API</span>
-                    <Badge className="bg-green-100 text-green-800">Active</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">RentCast</span>
-                    <Badge className="bg-green-100 text-green-800">Active</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">People Data Labs</span>
-                    <Badge className="bg-green-100 text-green-800">Active</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Google Maps</span>
-                    <Badge className="bg-green-100 text-green-800">Active</Badge>
-                  </div>
-                </div>
+              <CardContent className="text-center py-8">
+                <Heart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 mb-2">No saved properties yet</p>
+                <p className="text-sm text-gray-400">Click the heart icon on any property to save it</p>
               </CardContent>
             </Card>
           </div>
