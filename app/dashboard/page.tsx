@@ -1,14 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import { Building, Search, Filter, Download, Heart, Eye, TrendingUp, MapPin, BarChart3 } from "lucide-react"
+import { Building, Search, Filter, Download, Heart, TrendingUp, MapPin, BarChart3 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { InteractivePropertyMap } from "@/components/interactive-property-map"
+import { PropertyDetails } from "@/components/property-details"
+import { OwnerWealthAnalysis } from "@/components/owner-wealth-analysis"
+
+type ViewMode = "map" | "property" | "owner"
 
 const mockWealthData = [
   {
@@ -47,7 +50,9 @@ const mockWealthData = [
 ]
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState("all")
+  const [viewMode, setViewMode] = useState<ViewMode>("map")
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null)
+  const [selectedOwnerId, setSelectedOwnerId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("las vegas")
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
   const [exportOptions, setExportOptions] = useState({
@@ -56,11 +61,22 @@ export default function DashboardPage() {
     marketData: false,
     verification: true,
   })
-  const [selectedOwner, setSelectedOwner] = useState<string | null>(null)
   const [mapProperties, setMapProperties] = useState(mockWealthData)
 
-  const handlePropertySelect = (property: any) => {
-    setSelectedOwner(property.id)
+  const handlePropertySelect = (propertyId: string) => {
+    setSelectedPropertyId(propertyId)
+    setViewMode("property")
+  }
+
+  const handleOwnerSelect = (ownerId: string) => {
+    setSelectedOwnerId(ownerId)
+    setViewMode("owner")
+  }
+
+  const handleBackToMap = () => {
+    setViewMode("map")
+    setSelectedPropertyId(null)
+    setSelectedOwnerId(null)
   }
 
   const handleSearchResults = (results: any[]) => {
@@ -117,11 +133,15 @@ export default function DashboardPage() {
               </div>
             </Link>
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/properties" className="text-gray-600 hover:text-blue-600">
-                Search Properties
+              <Button variant={viewMode === "map" ? "default" : "outline"} onClick={handleBackToMap}>
+                <Search className="w-4 h-4 mr-2" />
+                Property Map
+              </Button>
+              <Link href="/learn" className="text-gray-600 hover:text-blue-600">
+                Knowledge Center
               </Link>
-              <Link href="/about" className="text-gray-600 hover:text-blue-600">
-                About
+              <Link href="/profile" className="text-gray-600 hover:text-blue-600">
+                Profile
               </Link>
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
@@ -134,188 +154,92 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Page Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4">Real Estate Intelligence Dashboard</h1>
-          <p className="text-gray-600 mb-8">
-            Real-time property ownership data, trust scores, and market intelligence powered by AI
-          </p>
+      {/* Main Content */}
+      <div className="h-[calc(100vh-80px)]">
+        {viewMode === "map" && <InteractivePropertyMap />}
 
-          {/* Tab Navigation */}
-          <div className="flex justify-center gap-2 mb-8">
-            <Button
-              variant={activeTab === "all" ? "default" : "outline"}
-              onClick={() => setActiveTab("all")}
-              className="px-6"
-            >
-              All Results
-            </Button>
-            <Button
-              variant={activeTab === "properties" ? "default" : "outline"}
-              onClick={() => setActiveTab("properties")}
-              className="px-6"
-            >
-              Properties Only
-            </Button>
-            <Button
-              variant={activeTab === "verified" ? "default" : "outline"}
-              onClick={() => setActiveTab("verified")}
-              className="px-6"
-            >
-              Verified Owners
-            </Button>
+        {viewMode === "property" && selectedPropertyId && (
+          <PropertyDetails propertyId={selectedPropertyId} onBack={handleBackToMap} />
+        )}
+
+        {viewMode === "owner" && selectedOwnerId && (
+          <div className="container mx-auto px-4 py-8">
+            <div className="flex items-center gap-4 mb-6">
+              <Button variant="outline" onClick={handleBackToMap}>
+                ← Back to Map
+              </Button>
+              <h1 className="text-2xl font-bold">Owner Wealth Analysis</h1>
+            </div>
+            <OwnerWealthAnalysis ownerId={selectedOwnerId} />
           </div>
+        )}
+      </div>
 
-          {/* Search Bar */}
-          <div className="max-w-4xl mx-auto mb-6">
-            <div className="flex gap-2">
-              <div className="flex-1 relative">
-                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <Input
-                  placeholder="Search by address, city, or neighborhood..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 pr-4 py-3 text-lg"
-                />
-              </div>
-              <Button onClick={handleSearch} size="lg" className="px-8">
-                <Search className="w-5 h-5 mr-2" />
-                Search
+      {/* Sidebar */}
+      <div className="fixed right-0 top-0 h-screen w-80 bg-white border-l">
+        <div className="container mx-auto px-4 py-8">
+          {/* Page Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold mb-4">Real Estate Intelligence Dashboard</h1>
+            <p className="text-gray-600 mb-8">
+              Real-time property ownership data, trust scores, and market intelligence powered by AI
+            </p>
+
+            {/* Tab Navigation */}
+            <div className="flex justify-center gap-2 mb-8">
+              <Button
+                variant={viewMode === "map" ? "default" : "outline"}
+                onClick={() => setViewMode("map")}
+                className="px-6"
+              >
+                Map View
+              </Button>
+              <Button
+                variant={viewMode === "property" ? "default" : "outline"}
+                onClick={() => setViewMode("property")}
+                className="px-6"
+              >
+                Property Details
+              </Button>
+              <Button
+                variant={viewMode === "owner" ? "default" : "outline"}
+                onClick={() => setViewMode("owner")}
+                className="px-6"
+              >
+                Owner Analysis
               </Button>
             </div>
-            <p className="text-sm text-gray-500 mt-2">
-              Try: "123 Main St" or "Sarah Johnson Properties" or "Pacific Real Estate"
-            </p>
-          </div>
 
-          {/* Advanced Filters Toggle */}
-          <Button variant="outline" onClick={() => setShowAdvancedFilters(!showAdvancedFilters)} className="mb-6">
-            <Filter className="w-4 h-4 mr-2" />
-            Advanced Filters
-          </Button>
-        </div>
-
-        <div className="grid lg:grid-cols-4 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            {/* Search Results */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <CardTitle className="flex items-center gap-2">
-                      <BarChart3 className="w-5 h-5" />
-                      Search Results
-                    </CardTitle>
-                    <Badge>1 properties</Badge>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <BarChart3 className="w-4 h-4" />
-                    </Button>
-                  </div>
+            {/* Search Bar */}
+            <div className="max-w-4xl mx-auto mb-6">
+              <div className="flex gap-2">
+                <div className="flex-1 relative">
+                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    placeholder="Search by address, city, or neighborhood..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-12 pr-4 py-3 text-lg"
+                  />
                 </div>
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <div className="flex items-center gap-2">
-                    <Filter className="w-4 h-4" />
-                    <span>Sort by:</span>
-                    <Select defaultValue="relevance">
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="relevance">Relevance</SelectItem>
-                        <SelectItem value="price">Price</SelectItem>
-                        <SelectItem value="trust">Trust Score</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <span>Showing 1 of 1 results</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {/* Property Result */}
-                <div className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-2">las vegas</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div>
-                          <span className="text-gray-500">Owner:</span>
-                          <div className="font-medium">Sample Owner</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Value:</span>
-                          <div className="font-medium text-green-600">$790,857</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Trust Score:</span>
-                          <div className="font-medium">99%</div>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Status:</span>
-                          <Badge variant="destructive">Unverified</Badge>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm">
-                        <Heart className="w-4 h-4" />
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                <Button onClick={handleSearch} size="lg" className="px-8">
+                  <Search className="w-5 h-5 mr-2" />
+                  Search
+                </Button>
+              </div>
+              <p className="text-sm text-gray-500 mt-2">
+                Try: "123 Main St" or "Sarah Johnson Properties" or "Pacific Real Estate"
+              </p>
+            </div>
 
-            {/* Advanced Real Estate Tools */}
-            <Card className="mt-8">
-              <CardHeader>
-                <CardTitle>Advanced Real Estate Tools</CardTitle>
-                <CardDescription>Professional tools and analytics for informed real estate decisions</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Property Analysis Tools */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5" />
-                    Property Analysis Tools
-                  </h3>
-                  <p className="text-gray-600 mb-4">Compare properties and analyze market trends</p>
+            {/* Advanced Filters Toggle */}
+            <Button variant="outline" onClick={() => setShowAdvancedFilters(!showAdvancedFilters)} className="mb-6">
+              <Filter className="w-4 h-4 mr-2" />
+              Advanced Filters
+            </Button>
 
-                  {/* Property Comparison */}
-                  <Card className="bg-gray-50">
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-2 mb-4">
-                        <BarChart3 className="w-5 h-5" />
-                        <h4 className="font-semibold">Property Comparison</h4>
-                      </div>
-                      <p className="text-gray-600 mb-4">Select properties to compare side by side</p>
-                      <div className="text-center py-8">
-                        <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <BarChart3 className="w-8 h-8 text-gray-400" />
-                        </div>
-                        <p className="text-gray-500 mb-2">No properties selected</p>
-                        <p className="text-sm text-gray-400">Click the compare icon on any property to add it here</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
             {/* Data Export & Reports */}
-            <Card>
+            <Card className="mt-8">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Download className="w-5 h-5" />
@@ -451,7 +375,7 @@ export default function DashboardPage() {
             </Card>
 
             {/* Live Market Intelligence */}
-            <Card>
+            <Card className="mt-8">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5" />
@@ -484,7 +408,7 @@ export default function DashboardPage() {
             </Card>
 
             {/* Saved Properties */}
-            <Card>
+            <Card className="mt-8">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Heart className="w-5 h-5" />
