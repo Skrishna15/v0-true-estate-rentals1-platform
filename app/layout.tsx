@@ -6,10 +6,11 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "TrueEstate - Real Estate Transparency & Owner Verification",
+  title: "TrueEstate - Know Your Landlord. Protect Your Investment.",
   description:
-    "Stop rental scams with verified property ownership data, trust scores, and wealth mapping. Make informed real estate decisions with transparent landlord verification.",
-  keywords: "real estate transparency, rental scams, property owner verification, landlord trust score, wealth mapping",
+    "The first real estate intelligence platform that provides complete transparency into property ownership, landlord credibility, and market dynamics. Make informed decisions with verified data before you invest your capital.",
+  keywords:
+    "real estate transparency, rental scams, property owner verification, landlord trust score, wealth mapping, property intelligence",
     generator: 'v0.dev'
 }
 
