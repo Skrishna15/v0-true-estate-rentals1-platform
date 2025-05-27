@@ -7,7 +7,7 @@ import "mapbox-gl/dist/mapbox-gl.css"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Map, Satellite, Navigation, Plus, Minus, Download, Upload, Save } from "lucide-react"
+import { Map, Satellite, Navigation, Plus, Minus, Download, Upload, Save, Building } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import {
   Dialog,
@@ -18,6 +18,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Card } from "@/components/ui/card"
+import { PropertyOwnersPanel } from "@/components/property-owners-panel"
 
 interface Property {
   id: string
@@ -153,6 +154,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
   const [newViewName, setNewViewName] = useState("")
   const [isExporting, setIsExporting] = useState(false)
   const { toast } = useToast()
+  const [showOwnersPanel, setShowOwnersPanel] = useState(false)
 
   const mapStyles = {
     street: "mapbox://styles/mapbox/streets-v12",
@@ -822,6 +824,15 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
             <Download className="w-4 h-4 mr-2" />
             {isExporting ? "Exporting..." : "Export Map Data"}
           </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowOwnersPanel(!showOwnersPanel)}
+            className="bg-white hover:bg-gray-50"
+          >
+            <Building className="w-4 h-4 mr-2" />
+            Property Owners
+          </Button>
         </div>
       </div>
 
@@ -889,6 +900,9 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
           </div>
         </div>
       </div>
+
+      {/* Property Owners Panel */}
+      <PropertyOwnersPanel isVisible={showOwnersPanel} onToggle={() => setShowOwnersPanel(!showOwnersPanel)} />
     </div>
   )
 }
