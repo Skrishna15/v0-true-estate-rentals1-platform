@@ -593,6 +593,367 @@ const stateProperties: Property[] = [
     state: "Delaware",
     city: "Wilmington",
   },
+  // Additional California properties
+  {
+    id: "ca-3",
+    owner: "Jennifer Park",
+    address: "789 Silicon Valley Dr, San Jose, CA",
+    value: "$1.4M",
+    trustScore: 91,
+    coordinates: [-121.8863, 37.3382],
+    state: "California",
+    city: "San Jose",
+  },
+  {
+    id: "ca-4",
+    owner: "Robert Kim",
+    address: "321 Beach Walk, Santa Monica, CA",
+    value: "$2.8M",
+    trustScore: 94,
+    coordinates: [-118.4912, 34.0195],
+    state: "California",
+    city: "Santa Monica",
+  },
+  {
+    id: "ca-5",
+    owner: "Maria Santos",
+    address: "654 Wine Country Rd, Napa, CA",
+    value: "$1.9M",
+    trustScore: 89,
+    coordinates: [-122.2869, 38.2975],
+    state: "California",
+    city: "Napa",
+  },
+
+  // Additional New York properties
+  {
+    id: "ny-3",
+    owner: "David Chen",
+    address: "456 Park Ave, New York, NY",
+    value: "$4.2M",
+    trustScore: 96,
+    coordinates: [-73.9712, 40.7589],
+    state: "New York",
+    city: "New York",
+  },
+  {
+    id: "ny-4",
+    owner: "Sarah Williams",
+    address: "789 Brooklyn Heights, Brooklyn, NY",
+    value: "$1.6M",
+    trustScore: 87,
+    coordinates: [-73.9969, 40.6962],
+    state: "New York",
+    city: "Brooklyn",
+  },
+  {
+    id: "ny-5",
+    owner: "Michael Rodriguez",
+    address: "123 Long Island Ave, Nassau, NY",
+    value: "$980K",
+    trustScore: 85,
+    coordinates: [-73.5594, 40.6546],
+    state: "New York",
+    city: "Nassau",
+  },
+
+  // Additional Texas properties
+  {
+    id: "tx-4",
+    owner: "Lisa Johnson",
+    address: "456 River Walk, San Antonio, TX",
+    value: "$520K",
+    trustScore: 88,
+    coordinates: [-98.4936, 29.4241],
+    state: "Texas",
+    city: "San Antonio",
+  },
+  {
+    id: "tx-5",
+    owner: "Carlos Martinez",
+    address: "789 Tech District, Austin, TX",
+    value: "$890K",
+    trustScore: 92,
+    coordinates: [-97.7431, 30.2672],
+    state: "Texas",
+    city: "Austin",
+  },
+
+  // Additional Florida properties
+  {
+    id: "fl-3",
+    owner: "Jennifer Lopez",
+    address: "321 Art Deco Dr, Miami Beach, FL",
+    value: "$1.8M",
+    trustScore: 90,
+    coordinates: [-80.13, 25.7907],
+    state: "Florida",
+    city: "Miami Beach",
+  },
+  {
+    id: "fl-4",
+    owner: "Robert Taylor",
+    address: "654 Disney World Blvd, Orlando, FL",
+    value: "$420K",
+    trustScore: 84,
+    coordinates: [-81.3792, 28.5383],
+    state: "Florida",
+    city: "Orlando",
+  },
+
+  // Additional Washington properties
+  {
+    id: "wa-2",
+    owner: "Amanda Chen",
+    address: "987 Tech Campus Dr, Redmond, WA",
+    value: "$1.1M",
+    trustScore: 93,
+    coordinates: [-122.1215, 47.674],
+    state: "Washington",
+    city: "Redmond",
+  },
+  {
+    id: "wa-3",
+    owner: "Kevin Park",
+    address: "147 Coffee St, Starbucks, WA",
+    value: "$780K",
+    trustScore: 86,
+    coordinates: [-122.2015, 47.6101],
+    state: "Washington",
+    city: "Seattle",
+  },
+
+  // Additional Illinois properties
+  {
+    id: "il-2",
+    owner: "Michelle Davis",
+    address: "258 Magnificent Mile, Chicago, IL",
+    value: "$890K",
+    trustScore: 91,
+    coordinates: [-87.6244, 41.8955],
+    state: "Illinois",
+    city: "Chicago",
+  },
+  {
+    id: "il-3",
+    owner: "Thomas Wilson",
+    address: "369 Navy Pier Dr, Chicago, IL",
+    value: "$1.2M",
+    trustScore: 88,
+    coordinates: [-87.6056, 41.8919],
+    state: "Illinois",
+    city: "Chicago",
+  },
+
+  // Additional Massachusetts properties
+  {
+    id: "ma-2",
+    owner: "Patricia Brown",
+    address: "470 MIT Campus, Cambridge, MA",
+    value: "$1.6M",
+    trustScore: 95,
+    coordinates: [-71.0942, 42.3601],
+    state: "Massachusetts",
+    city: "Cambridge",
+  },
+  {
+    id: "ma-3",
+    owner: "Daniel Kim",
+    address: "581 Fenway Park Dr, Boston, MA",
+    value: "$1.3M",
+    trustScore: 89,
+    coordinates: [-71.0972, 42.3467],
+    state: "Massachusetts",
+    city: "Boston",
+  },
+
+  // Additional Georgia properties
+  {
+    id: "ga-2",
+    owner: "Ashley Martinez",
+    address: "692 CNN Center, Atlanta, GA",
+    value: "$620K",
+    trustScore: 90,
+    coordinates: [-84.3951, 33.7573],
+    state: "Georgia",
+    city: "Atlanta",
+  },
+  {
+    id: "ga-3",
+    owner: "Ryan Thompson",
+    address: "703 Savannah Historic, Savannah, GA",
+    value: "$450K",
+    trustScore: 87,
+    coordinates: [-81.0998, 32.0835],
+    state: "Georgia",
+    city: "Savannah",
+  },
+
+  // Additional Colorado properties
+  {
+    id: "co-2",
+    owner: "Stephanie Lee",
+    address: "814 Ski Resort Dr, Aspen, CO",
+    value: "$2.4M",
+    trustScore: 92,
+    coordinates: [-106.8175, 39.1911],
+    state: "Colorado",
+    city: "Aspen",
+  },
+  {
+    id: "co-3",
+    owner: "Brandon White",
+    address: "925 Boulder Creek, Boulder, CO",
+    value: "$850K",
+    trustScore: 88,
+    coordinates: [-105.2705, 40.015],
+    state: "Colorado",
+    city: "Boulder",
+  },
+
+  // Additional Nevada properties
+  {
+    id: "nv-2",
+    owner: "Crystal Garcia",
+    address: "036 Lake Tahoe Dr, Reno, NV",
+    value: "$680K",
+    trustScore: 85,
+    coordinates: [-119.7674, 39.5296],
+    state: "Nevada",
+    city: "Reno",
+  },
+
+  // Additional Oregon properties
+  {
+    id: "or-2",
+    owner: "Justin Rodriguez",
+    address: "147 Crater Lake Ave, Eugene, OR",
+    value: "$520K",
+    trustScore: 86,
+    coordinates: [-123.0868, 44.0521],
+    state: "Oregon",
+    city: "Eugene",
+  },
+
+  // Additional Arizona properties
+  {
+    id: "az-2",
+    owner: "Monica Johnson",
+    address: "258 Grand Canyon Dr, Scottsdale, AZ",
+    value: "$780K",
+    trustScore: 89,
+    coordinates: [-111.9261, 33.4942],
+    state: "Arizona",
+    city: "Scottsdale",
+  },
+
+  // Additional North Carolina properties
+  {
+    id: "nc-2",
+    owner: "Tyler Davis",
+    address: "369 Research Triangle, Raleigh, NC",
+    value: "$480K",
+    trustScore: 91,
+    coordinates: [-78.6382, 35.7796],
+    state: "North Carolina",
+    city: "Raleigh",
+  },
+
+  // Additional Virginia properties
+  {
+    id: "va-2",
+    owner: "Samantha Wilson",
+    address: "470 Pentagon Dr, Arlington, VA",
+    value: "$720K",
+    trustScore: 93,
+    coordinates: [-77.0369, 38.8816],
+    state: "Virginia",
+    city: "Arlington",
+  },
+
+  // Additional Pennsylvania properties
+  {
+    id: "pa-2",
+    owner: "Christopher Brown",
+    address: "581 Liberty Bell Way, Pittsburgh, PA",
+    value: "$340K",
+    trustScore: 84,
+    coordinates: [-79.9959, 40.4406],
+    state: "Pennsylvania",
+    city: "Pittsburgh",
+  },
+
+  // Additional Ohio properties
+  {
+    id: "oh-2",
+    owner: "Rachel Miller",
+    address: "692 Rock Hall Dr, Cleveland, OH",
+    value: "$280K",
+    trustScore: 82,
+    coordinates: [-81.6944, 41.4993],
+    state: "Ohio",
+    city: "Cleveland",
+  },
+
+  // Additional Michigan properties
+  {
+    id: "mi-2",
+    owner: "Anthony Taylor",
+    address: "703 Great Lakes Ave, Grand Rapids, MI",
+    value: "$220K",
+    trustScore: 80,
+    coordinates: [-85.6681, 42.9634],
+    state: "Michigan",
+    city: "Grand Rapids",
+  },
+
+  // Additional Tennessee properties
+  {
+    id: "tn-2",
+    owner: "Melissa Jackson",
+    address: "814 Graceland Dr, Memphis, TN",
+    value: "$380K",
+    trustScore: 85,
+    coordinates: [-90.049, 35.1495],
+    state: "Tennessee",
+    city: "Memphis",
+  },
+
+  // Additional Louisiana properties
+  {
+    id: "la-2",
+    owner: "Jordan Martin",
+    address: "925 Jazz Festival St, New Orleans, LA",
+    value: "$520K",
+    trustScore: 87,
+    coordinates: [-90.0715, 29.9511],
+    state: "Louisiana",
+    city: "New Orleans",
+  },
+
+  // Additional Minnesota properties
+  {
+    id: "mn-2",
+    owner: "Nicole Garcia",
+    address: "036 Mall of America Dr, Bloomington, MN",
+    value: "$420K",
+    trustScore: 88,
+    coordinates: [-93.2424, 44.8548],
+    state: "Minnesota",
+    city: "Bloomington",
+  },
+
+  // Additional Wisconsin properties
+  {
+    id: "wi-2",
+    owner: "Derek Rodriguez",
+    address: "147 Lambeau Field Dr, Green Bay, WI",
+    value: "$320K",
+    trustScore: 84,
+    coordinates: [-88.0133, 44.5013],
+    state: "Wisconsin",
+    city: "Green Bay",
+  },
 ]
 
 export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = stateProperties, onPropertySelect }) => {
@@ -706,15 +1067,28 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
     properties.forEach((property) => {
       const el = document.createElement("div")
       el.className = "marker"
+
+      // Enhanced marker styling based on property value
+      const propertyValue = Number.parseFloat(property.value?.replace(/[$MK]/g, "") || "0")
+      const isHighValue = propertyValue > 1.5 // Properties over $1.5M
+      const isMegaValue = propertyValue > 3.0 // Properties over $3M
+
+      // Base styling
       el.style.backgroundColor =
         property.trustScore >= 90 ? "#10b981" : property.trustScore >= 80 ? "#f59e0b" : "#ef4444"
-      el.style.width = "24px"
-      el.style.height = "24px"
+      el.style.width = isMegaValue ? "32px" : isHighValue ? "28px" : "24px"
+      el.style.height = isMegaValue ? "32px" : isHighValue ? "28px" : "24px"
       el.style.borderRadius = "50%"
       el.style.cursor = "pointer"
       el.style.border = "3px solid white"
-      el.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)"
+      el.style.boxShadow = isMegaValue ? "0 4px 12px rgba(0,0,0,0.4)" : "0 2px 8px rgba(0,0,0,0.3)"
       el.style.transition = "all 0.2s ease"
+      el.style.position = "relative"
+
+      // Add pulsing animation for high-value properties
+      if (isHighValue) {
+        el.style.animation = "pulse 2s infinite"
+      }
 
       // Add special styling for search results
       if (property.id.startsWith("search-")) {
@@ -722,37 +1096,77 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
         el.style.animation = "pulse 2s infinite"
       }
 
+      // Add value indicator
+      if (isMegaValue) {
+        const valueIndicator = document.createElement("div")
+        valueIndicator.style.position = "absolute"
+        valueIndicator.style.top = "-8px"
+        valueIndicator.style.right = "-8px"
+        valueIndicator.style.width = "16px"
+        valueIndicator.style.height = "16px"
+        valueIndicator.style.backgroundColor = "#ffd700"
+        valueIndicator.style.borderRadius = "50%"
+        valueIndicator.style.border = "2px solid white"
+        valueIndicator.style.fontSize = "10px"
+        valueIndicator.style.display = "flex"
+        valueIndicator.style.alignItems = "center"
+        valueIndicator.style.justifyContent = "center"
+        valueIndicator.innerHTML = "★"
+        valueIndicator.style.color = "white"
+        el.appendChild(valueIndicator)
+      }
+
       el.addEventListener("mouseenter", () => {
         el.style.transform = "scale(1.2)"
+        el.style.zIndex = "1000"
       })
 
       el.addEventListener("mouseleave", () => {
         el.style.transform = "scale(1)"
+        el.style.zIndex = "auto"
       })
 
       el.addEventListener("click", () => {
         onPropertySelect?.(property)
       })
 
+      // Enhanced popup with more details
       const popup = new mapboxgl.Popup({
         offset: 25,
         closeButton: true,
         closeOnClick: false,
       }).setHTML(
-        `<div class="p-3 min-w-[200px]">
-        <h3 class="font-semibold text-lg mb-1">${property.owner}</h3>
-        <p class="text-sm text-gray-600 mb-1">${property.city || property.state}, ${property.state}</p>
-        <p class="text-xs text-gray-500 mb-2">${property.address}</p>
-        <p class="text-lg font-bold text-green-600 mb-2">${property.value || property.totalValue}</p>
-        <div class="flex items-center justify-between">
-          <span class="text-xs text-gray-500">Trust Score:</span>
-          <span class="text-sm font-semibold ${property.trustScore >= 90 ? "text-green-600" : property.trustScore >= 80 ? "text-yellow-600" : "text-red-600"}">${property.trustScore}%</span>
-        </div>
-        ${property.id.startsWith("search-") ? '<div class="text-xs text-blue-600 font-medium mt-1">Search Result</div>' : ""}
-        <button class="mt-2 w-full bg-blue-600 text-white text-xs py-1 px-2 rounded hover:bg-blue-700">
-          View Details
-        </button>
-      </div>`,
+        `<div class="p-4 min-w-[250px]">
+          <div class="flex items-start justify-between mb-2">
+            <h3 class="font-semibold text-lg">${property.owner}</h3>
+            ${isMegaValue ? '<span class="text-yellow-500 text-lg">★</span>' : ""}
+          </div>
+          <p class="text-sm text-gray-600 mb-1">${property.city || property.state}, ${property.state}</p>
+          <p class="text-xs text-gray-500 mb-3">${property.address}</p>
+          <div class="grid grid-cols-2 gap-2 mb-3">
+            <div>
+              <span class="text-xs text-gray-500">Property Value</span>
+              <p class="text-lg font-bold text-green-600">${property.value || property.totalValue}</p>
+            </div>
+            <div>
+              <span class="text-xs text-gray-500">Trust Score</span>
+              <div class="flex items-center gap-1">
+                <span class="text-sm font-semibold ${property.trustScore >= 90 ? "text-green-600" : property.trustScore >= 80 ? "text-yellow-600" : "text-red-600"}">${property.trustScore}%</span>
+                <div class="w-2 h-2 rounded-full ${property.trustScore >= 90 ? "bg-green-500" : property.trustScore >= 80 ? "bg-yellow-500" : "bg-red-500"}"></div>
+              </div>
+            </div>
+          </div>
+          ${property.id.startsWith("search-") ? '<div class="text-xs text-blue-600 font-medium mb-2 flex items-center gap-1"><span class="w-2 h-2 bg-blue-500 rounded-full"></span>Search Result</div>' : ""}
+          ${isHighValue ? '<div class="text-xs text-purple-600 font-medium mb-2 flex items-center gap-1"><span class="w-2 h-2 bg-purple-500 rounded-full"></span>High Value Property</div>' : ""}
+          <div class="flex gap-2">
+            <button class="flex-1 bg-blue-600 text-white text-xs py-2 px-3 rounded hover:bg-blue-700 transition-colors">
+              View Details
+            </button>
+            <button class="flex-1 bg-gray-100 text-gray-700 text-xs py-2 px-3 rounded hover:bg-gray-200 transition-colors">
+              Save Property
+            </button>
+          </div>
+        </div>`,
       )
 
       new mapboxgl.Marker(el).setLngLat(property.coordinates).setPopup(popup).addTo(map.current!)
@@ -857,8 +1271,9 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
 
       {/* Legend */}
       <div className="absolute top-4 right-20 bg-white rounded-lg shadow-lg p-3 z-10">
-        <h4 className="font-semibold text-sm mb-2">Trust Score Legend</h4>
-        <div className="space-y-1 text-xs">
+        <h4 className="font-semibold text-sm mb-3">Property Map Legend</h4>
+        <div className="space-y-2 text-xs">
+          <div className="font-medium text-gray-700 mb-1">Trust Score</div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             <span>90%+ (Verified Safe)</span>
@@ -870,6 +1285,31 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-500 rounded-full"></div>
             <span>&lt;80% (High Risk)</span>
+          </div>
+
+          <div className="border-t pt-2 mt-2">
+            <div className="font-medium text-gray-700 mb-1">Property Value</div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-blue-500 rounded-full relative">
+                <span className="absolute -top-1 -right-1 text-yellow-500 text-xs">★</span>
+              </div>
+              <span>$3M+ (Premium)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3.5 h-3.5 bg-blue-500 rounded-full"></div>
+              <span>$1.5M+ (High Value)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+              <span>&lt;$1.5M (Standard)</span>
+            </div>
+          </div>
+
+          <div className="border-t pt-2 mt-2">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-blue-500 rounded-full border-2 border-blue-300"></div>
+              <span>Search Results</span>
+            </div>
           </div>
         </div>
       </div>
