@@ -7,9 +7,8 @@ import { Providers } from "@/components/providers"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "TrueEstate - Real Estate Intelligence Platform",
-  description:
-    "Verify property ownership, analyze market trends, and make informed real estate decisions with AI-powered insights",
+  title: "TrueEstate - Clarity before Capital",
+  description: "Verified property ownership and wealth insights for renters, investors, and real estate professionals",
     generator: 'v0.dev'
 }
 

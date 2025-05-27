@@ -1,224 +1,197 @@
-"use client"
-
-import { useEffect } from "react"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { Search, Eye, Shield, Building, MapPin, AlertTriangle, Users, DollarSign } from "lucide-react"
+import { Building, Shield, TrendingUp, Users, MapPin, CheckCircle, Star, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Header } from "@/components/header"
+
+const features = [
+  {
+    icon: Shield,
+    title: "Trust & Verification",
+    description: "Verified property ownership with comprehensive trust scores and scam protection.",
+    items: ["Owner verification", "Trust score badges", "Scam alerts", "Document validation"],
+  },
+  {
+    icon: TrendingUp,
+    title: "Insights & Analytics",
+    description: "Deep market insights and wealth analytics for informed real estate decisions.",
+    items: ["Market trends", "Property analytics", "Investment insights", "Neighborhood data"],
+  },
+  {
+    icon: Users,
+    title: "Community & Interaction",
+    description: "Connect with verified owners and access community-driven insights.",
+    items: ["Owner Q&A", "Community reviews", "Expert insights", "Discussion forums"],
+  },
+]
+
+const testimonials = [
+  {
+    name: "Sarah Johnson",
+    role: "First-time Renter",
+    content:
+      "TrueEstate helped me avoid a rental scam. The trust scores and verification gave me confidence in my decision.",
+    rating: 5,
+  },
+  {
+    name: "Michael Chen",
+    role: "Real Estate Investor",
+    content:
+      "The wealth map and analytics tools are incredible. I can see ownership patterns and make better investment decisions.",
+    rating: 5,
+  },
+  {
+    name: "Jennifer Martinez",
+    role: "Property Manager",
+    content:
+      "Our clients love the transparency. The verification system has significantly reduced fraudulent inquiries.",
+    rating: 5,
+  },
+]
 
 export default function HomePage() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
-
-  // Redirect authenticated users to wealth map
-  useEffect(() => {
-    if (status === "authenticated" && session) {
-      router.push("/wealth-map")
-    }
-  }, [session, status, router])
-
-  // Show loading or redirect for authenticated users
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    )
-  }
-
-  if (status === "authenticated") {
-    return null // Will redirect to wealth map
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Building className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h1 className="font-bold text-xl text-gray-900">TrueEstate</h1>
-                <p className="text-xs text-gray-600">Transparency in Real Estate</p>
-              </div>
-            </div>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/wealth-map" className="flex items-center gap-2 text-gray-600 hover:text-blue-600">
-                <Eye className="w-4 h-4" />
-                Wealth Map
-              </Link>
-              <Link href="/properties" className="text-gray-600 hover:text-blue-600">
-                Property Search
-              </Link>
-              <Link href="/about" className="text-gray-600 hover:text-blue-600">
-                About
-              </Link>
-              <Link href="/saved" className="text-gray-600 hover:text-blue-600">
-                Saved
-              </Link>
-              <Link href="/signin" className="text-gray-600 hover:text-blue-600">
-                Sign In
-              </Link>
-              <Button asChild>
-                <Link href="/signup">Get Started</Link>
-              </Button>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-white">
+      <Header />
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16 text-center">
-        <div className="mb-8">
-          <div className="inline-flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-full text-sm mb-8">
-            <Shield className="w-4 h-4" />
-            Solving Real Estate Transparency Crisis
+      <section className="relative bg-gradient-to-br from-blue-50 to-indigo-100 py-20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <Badge className="mb-6 bg-blue-100 text-blue-800 hover:bg-blue-100">Trusted by 50,000+ users</Badge>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              Clarity before Capital
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              TrueEstate combines a user-friendly rental platform with a powerful Wealth Map — serving renters,
+              investors, and real estate professionals with verified, transparent ownership and wealth insights.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700" asChild>
+                <Link href="/wealth-map">
+                  Explore Wealth Map
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/learn">Learn More</Link>
+              </Button>
+            </div>
           </div>
         </div>
+      </section>
 
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900">
-          Verify Property Owners. <span className="text-blue-600">Map Hidden Wealth.</span>
-        </h1>
+      {/* Features Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose TrueEstate?</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              We provide the tools and insights you need to make confident real estate decisions
+            </p>
+          </div>
 
-        <p className="text-xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed">
-          Stop falling victim to rental scams and unverified listings. Access verified ownership data, wealth profiles,
-          and trust metrics to make informed real estate decisions.
-        </p>
+          <div className="grid md:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                    <feature.icon className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-xl">{feature.title}</CardTitle>
+                  <CardDescription className="text-gray-600">{feature.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2">
+                    {feature.items.map((item, itemIndex) => (
+                      <li key={itemIndex} className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <span className="text-sm text-gray-600">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        <Button size="lg" className="mb-12 bg-blue-600 hover:bg-blue-700" asChild>
-          <Link href="/wealth-map">
-            <Eye className="w-5 h-5 mr-2" />
-            Explore Wealth Map
-          </Link>
-        </Button>
-
-        {/* Search Bar */}
-        <div className="max-w-2xl mx-auto">
-          <div className="relative bg-white rounded-lg shadow-sm border">
-            <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <Input
-              placeholder="Search any property address to verify ownership..."
-              className="pl-12 pr-16 py-4 text-lg border-0 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-            <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-md bg-blue-600 hover:bg-blue-700">
-              <Search className="w-5 h-5" />
+      {/* Wealth Map Preview */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Interactive Wealth Map</h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Visualize property ownership patterns and wealth distribution across any location
+            </p>
+            <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+              <div className="aspect-video bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center">
+                <div className="text-center">
+                  <MapPin className="w-16 h-16 text-blue-600 mx-auto mb-4" />
+                  <p className="text-lg font-semibold text-gray-700">Interactive Map Preview</p>
+                  <p className="text-gray-500">Explore properties with verified ownership data</p>
+                </div>
+              </div>
+            </div>
+            <Button size="lg" asChild>
+              <Link href="/wealth-map">
+                Launch Wealth Map
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* The Problem Section */}
-      <section className="bg-white py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4 text-gray-900">The Real Estate Transparency Problem</h2>
-          <p className="text-gray-600 mb-12 max-w-3xl mx-auto text-lg">
-            Current rental and real estate ecosystem lacks critical transparency, putting renters and investors at risk
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <Card className="p-8 border-0 shadow-sm bg-red-50">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <AlertTriangle className="w-8 h-8 text-red-600" />
-              </div>
-              <h3 className="font-semibold mb-3 text-lg text-gray-900">$1.2B Lost to Rental Scams</h3>
-              <p className="text-gray-600">
-                Fake listings and unverified owners cost renters billions annually with no way to verify legitimacy
-              </p>
-            </Card>
-
-            <Card className="p-8 border-0 shadow-sm bg-orange-50">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Eye className="w-8 h-8 text-orange-600" />
-              </div>
-              <h3 className="font-semibold mb-3 text-lg text-gray-900">Hidden Ownership Networks</h3>
-              <p className="text-gray-600">
-                Complex LLCs and shell companies obscure true property controllers and wealth patterns
-              </p>
-            </Card>
-
-            <Card className="p-8 border-0 shadow-sm bg-yellow-50">
-              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Users className="w-8 h-8 text-yellow-600" />
-              </div>
-              <h3 className="font-semibold mb-3 text-lg text-gray-900">No Landlord Credibility Data</h3>
-              <p className="text-gray-600">
-                Renters can't verify landlord history, response rates, or trustworthiness before signing leases
-              </p>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust & Verification Features */}
-      <section className="bg-gray-50 py-16">
+      {/* Testimonials */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 text-gray-900">Trust & Verification System</h2>
-            <p className="text-gray-600 text-lg">
-              Advanced verification and trust scoring for safer real estate transactions
-            </p>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Users Say</h2>
+            <p className="text-xl text-gray-600">Join thousands of satisfied users who trust TrueEstate</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            <Card className="p-6 text-center border-0 shadow-sm bg-white">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-6 h-6 text-green-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Trust Score</h3>
-              <p className="text-gray-600 text-sm">AI-powered trust scoring based on verification + reviews</p>
-            </Card>
-
-            <Card className="p-6 text-center border-0 shadow-sm bg-white">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Building className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Ownership Docs</h3>
-              <p className="text-gray-600 text-sm">Verified ownership documents and legal proof</p>
-            </Card>
-
-            <Card className="p-6 text-center border-0 shadow-sm bg-white">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="w-6 h-6 text-purple-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Wealth Analytics</h3>
-              <p className="text-gray-600 text-sm">Portfolio insights and investment patterns</p>
-            </Card>
-
-            <Card className="p-6 text-center border-0 shadow-sm bg-white">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Users className="w-6 h-6 text-orange-600" />
-              </div>
-              <h3 className="font-semibold mb-2">Community</h3>
-              <p className="text-gray-600 text-sm">Reviews, comments, and Q&A with owners</p>
-            </Card>
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="border-0 shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-gray-600 mb-4">"{testimonial.content}"</p>
+                  <div>
+                    <p className="font-semibold">{testimonial.name}</p>
+                    <p className="text-sm text-gray-500">{testimonial.role}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="bg-blue-600 text-white py-16">
+      <section className="py-20 bg-blue-600">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Make Informed Decisions?</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Join thousands of users who trust TrueEstate for verified property information
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Get Started?</h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Join TrueEstate today and gain access to verified property data and powerful analytics tools
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" asChild>
-              <Link href="/signup">Start Free Trial</Link>
+            <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100" asChild>
+              <Link href="/signin">Sign Up Free</Link>
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="text-white border-white hover:bg-white hover:text-blue-600"
+              className="border-white text-white hover:bg-white hover:text-blue-600"
               asChild
             >
-              <Link href="/wealth-map">View Demo</Link>
+              <Link href="/learn">Learn More</Link>
             </Button>
           </div>
         </div>
@@ -233,90 +206,40 @@ export default function HomePage() {
                 <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                   <Building className="w-5 h-5 text-white" />
                 </div>
-                <span className="font-bold text-xl">TrueEstate</span>
+                <div>
+                  <h3 className="font-bold text-lg">TrueEstate</h3>
+                  <p className="text-sm text-gray-400">Clarity before Capital</p>
+                </div>
               </div>
-              <p className="text-gray-400">
-                Bringing transparency to real estate through verified data and trust metrics.
-              </p>
+              <p className="text-gray-400 text-sm">© 2024 TrueEstate. All rights reserved.</p>
             </div>
+
             <div>
-              <h3 className="font-semibold mb-4">Product</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/wealth-map" className="hover:text-white">
-                    Wealth Map
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/properties" className="hover:text-white">
-                    Property Search
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/verification" className="hover:text-white">
-                    Verification
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/analytics" className="hover:text-white">
-                    Analytics
-                  </Link>
-                </li>
-              </ul>
+              <h4 className="font-semibold mb-4">Company</h4>
+              <div className="space-y-2 text-sm text-gray-400">
+                <div>About Us</div>
+                <div>Careers</div>
+                <div>Contact</div>
+              </div>
             </div>
+
             <div>
-              <h3 className="font-semibold mb-4">Company</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/about" className="hover:text-white">
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/careers" className="hover:text-white">
-                    Careers
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/press" className="hover:text-white">
-                    Press
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="hover:text-white">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
+              <h4 className="font-semibold mb-4">Resources</h4>
+              <div className="space-y-2 text-sm text-gray-400">
+                <div>FAQ</div>
+                <div>Blog</div>
+                <div>Terms of Service</div>
+              </div>
             </div>
+
             <div>
-              <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/help" className="hover:text-white">
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/privacy" className="hover:text-white">
-                    Privacy
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/terms" className="hover:text-white">
-                    Terms
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/security" className="hover:text-white">
-                    Security
-                  </Link>
-                </li>
-              </ul>
+              <h4 className="font-semibold mb-4">Follow Us</h4>
+              <div className="space-y-2 text-sm text-gray-400">
+                <div>Twitter</div>
+                <div>LinkedIn</div>
+                <div>Facebook</div>
+              </div>
             </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 TrueEstate. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -6,11 +6,25 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token,
+      authorized: ({ token, req }) => {
+        // Allow access to public pages
+        if (
+          req.nextUrl.pathname.startsWith("/signin") ||
+          req.nextUrl.pathname.startsWith("/signup") ||
+          req.nextUrl.pathname === "/" ||
+          req.nextUrl.pathname.startsWith("/learn") ||
+          req.nextUrl.pathname.startsWith("/api/auth")
+        ) {
+          return true
+        }
+
+        // Require authentication for protected pages
+        return !!token
+      },
     },
   },
 )
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/profile/:path*", "/settings/:path*", "/admin/:path*"],
+  matcher: ["/wealth-map/:path*", "/dashboard/:path*", "/profile/:path*", "/properties/:path*"],
 }
