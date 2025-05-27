@@ -673,11 +673,11 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
       </div>
 
       {/* Map controls - Adjusted positioning */}
-      <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-2 z-20">
+      <div className="absolute top-4 right-4 z-20">
         <div className="flex flex-col gap-2">
           <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="justify-start">
+              <Button variant="outline" size="sm" className="bg-white hover:bg-gray-50">
                 <Save className="w-4 h-4 mr-2" />
                 Save View
               </Button>
@@ -718,7 +718,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
 
           <Dialog open={showSavedViews} onOpenChange={setShowSavedViews}>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="justify-start">
+              <Button variant="outline" size="sm" className="bg-white hover:bg-gray-50">
                 <Upload className="w-4 h-4 mr-2" />
                 Load Saved View
               </Button>
@@ -773,7 +773,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
             size="sm"
             onClick={handleExportMapData}
             disabled={isExporting}
-            className="justify-start"
+            className="bg-white hover:bg-gray-50"
           >
             <Download className="w-4 h-4 mr-2" />
             {isExporting ? "Exporting..." : "Export Map Data"}
