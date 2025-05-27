@@ -561,8 +561,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
         </div>
       </div>
 
-      {/* Map controls */}
-      <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-2 z-10">
+      {/* Map controls - Adjusted positioning */}
+      <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-2 z-20">
         <div className="flex flex-col gap-2">
           <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
             <DialogTrigger asChild>
@@ -690,8 +690,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="absolute top-4 right-20 bg-white rounded-lg shadow-lg p-3 z-10 max-w-xs">
+      {/* Legend - Fixed positioning to avoid overlap */}
+      <div className="absolute top-20 right-4 bg-white rounded-lg shadow-lg p-3 z-10 max-w-xs">
         <h4 className="font-semibold text-sm mb-3">Property Map Legend</h4>
         <div className="space-y-2 text-xs">
           <div className="font-medium text-gray-700 mb-1">Trust Score</div>
