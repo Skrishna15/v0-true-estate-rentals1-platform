@@ -90,6 +90,56 @@ const stateProperties: Property[] = [
   },
   // ... (keeping all the existing properties for brevity)
   // Additional properties would be included here
+  {
+    id: "ny-1",
+    owner: "Jennifer Martinez",
+    address: "456 Broadway, New York, NY",
+    value: "$3.2M",
+    trustScore: 94,
+    coordinates: [-74.006, 40.7128],
+    state: "New York",
+    city: "New York",
+  },
+  {
+    id: "tx-1",
+    owner: "Robert Wilson",
+    address: "789 Main St, Austin, TX",
+    value: "$950K",
+    trustScore: 89,
+    coordinates: [-97.7431, 30.2672],
+    state: "Texas",
+    city: "Austin",
+  },
+  {
+    id: "fl-1",
+    owner: "Maria Garcia",
+    address: "321 Ocean Dr, Miami, FL",
+    value: "$1.5M",
+    trustScore: 91,
+    coordinates: [-80.1918, 25.7617],
+    state: "Florida",
+    city: "Miami",
+  },
+  {
+    id: "il-1",
+    owner: "James Thompson",
+    address: "654 Lake Shore Dr, Chicago, IL",
+    value: "$1.1M",
+    trustScore: 86,
+    coordinates: [-87.6298, 41.8781],
+    state: "Illinois",
+    city: "Chicago",
+  },
+  {
+    id: "ma-1",
+    owner: "Lisa Chen",
+    address: "987 Commonwealth Ave, Boston, MA",
+    value: "$1.8M",
+    trustScore: 93,
+    coordinates: [-71.0589, 42.3601],
+    state: "Massachusetts",
+    city: "Boston",
+  },
 ]
 
 export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = stateProperties, onPropertySelect }) => {
@@ -531,20 +581,9 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
   }
 
   const handleViewDetails = (property: Property) => {
-    // Navigate to property details page or show detailed modal
+    // Navigate to property details page
     if (typeof window !== "undefined") {
-      // Option 1: Navigate to property details page
       window.location.href = `/property/${property.id}`
-
-      // Option 2: Call the onPropertySelect callback if provided
-      // onPropertySelect?.(property)
-
-      // Option 3: Show detailed information in a toast
-      toast({
-        title: `${property.owner}'s Property`,
-        description: `${property.address} - ${property.value} (Trust Score: ${property.trustScore}%)`,
-        duration: 5000,
-      })
     }
   }
 

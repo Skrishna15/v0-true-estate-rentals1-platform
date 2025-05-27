@@ -29,71 +29,62 @@ import { Label } from "@/components/ui/label"
 import { OwnerVerification } from "@/components/owner-verification"
 import { OwnerAnalyticsDashboard } from "@/components/owner-analytics-dashboard"
 
-// Enhanced property data with real API integration
-const propertyData = {
-  id: 1,
-  address: "123 Oak Street, San Francisco, CA 94102",
-  price: "$4,500/month",
-  bedrooms: 2,
-  bathrooms: 2,
-  sqft: 1200,
-  coordinates: { lat: 37.7749, lng: -122.4194 },
-  images: [
-    "/placeholder.svg?height=400&width=600",
-    "/placeholder.svg?height=400&width=600",
-    "/placeholder.svg?height=400&width=600",
-  ],
-  owner: {
-    name: "Sarah Johnson",
-    company: "Johnson Properties LLC",
-    avatar: "/placeholder-user.jpg",
-    trustScore: 95,
-    verified: true,
-    joinDate: "2019",
-    totalProperties: 12,
-    totalValue: "$8.2M",
-    responseRate: "98%",
-    responseTime: "< 2 hours",
-    portfolio: {
-      cities: [
-        { name: "San Francisco", count: 8, value: "$5.2M" },
-        { name: "Oakland", count: 3, value: "$2.1M" },
-        { name: "Berkeley", count: 1, value: "$0.9M" },
-      ],
-      propertyTypes: [
-        { type: "Apartments", count: 7 },
-        { type: "Single Family", count: 3 },
-        { type: "Condos", count: 2 },
-      ],
-      recentActivity: [
-        { action: "Purchased", property: "2-unit building on Pine St", date: "2 weeks ago" },
-        { action: "Renovated", property: "123 Oak Street unit 2A", date: "1 month ago" },
-        { action: "Listed", property: "456 Market Street", date: "2 months ago" },
-      ],
-    },
-  },
-  comments: [
+// Add this function before the propertyData constant
+const getPropertyById = (id: string) => {
+  const allProperties = [
     {
-      id: 1,
-      user: "Mike Chen",
-      avatar: "/placeholder-user.jpg",
-      comment: "Great location and responsive landlord. Highly recommend!",
-      rating: 5,
-      date: "2 weeks ago",
+      id: "ca-1",
+      address: "123 Market St, San Francisco, CA",
+      price: "$2.1M/month",
+      owner: { name: "Sarah Johnson", company: "Johnson Properties LLC" },
+      coordinates: { lat: 37.7749, lng: -122.4194 },
     },
     {
-      id: 2,
-      user: "Lisa Park",
-      avatar: "/placeholder-user.jpg",
-      comment: "Beautiful apartment with amazing city views. Sarah is very professional.",
-      rating: 5,
-      date: "1 month ago",
+      id: "ny-1",
+      address: "456 Broadway, New York, NY",
+      price: "$3.2M/month",
+      owner: { name: "Jennifer Martinez", company: "Martinez Real Estate" },
+      coordinates: { lat: 40.7128, lng: -74.006 },
     },
-  ],
+    {
+      id: "tx-1",
+      address: "789 Main St, Austin, TX",
+      price: "$950K/month",
+      owner: { name: "Robert Wilson", company: "Wilson Properties" },
+      coordinates: { lat: 30.2672, lng: -97.7431 },
+    },
+    // Add more properties as needed
+  ]
+
+  return (
+    allProperties.find((p) => p.id === id) || {
+      id: id,
+      address: "Property Address",
+      price: "$4,500/month",
+      owner: { name: "Property Owner", company: "Real Estate Company" },
+      coordinates: { lat: 37.7749, lng: -122.4194 },
+    }
+  )
 }
 
+// Enhanced property data with real API integration
 export default function PropertyPage() {
   const params = useParams()
+
+  // Replace the existing propertyData with:
+  const propertyData = {
+    ...getPropertyById(params.id as string),
+    bedrooms: 2,
+    bathrooms: 2,
+    sqft: 1200,
+    images: [
+      "/placeholder.svg?height=400&width=600",
+      "/placeholder.svg?height=400&width=600",
+      "/placeholder.svg?height=400&width=600",
+    ],
+    // ... rest of the existing propertyData
+  }
+
   const [showDetails, setShowDetails] = useState(true)
   const [newComment, setNewComment] = useState("")
   const [question, setQuestion] = useState("")
