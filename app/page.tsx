@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function Home() {
   return (
@@ -25,12 +26,8 @@ export default function Home() {
           <h1 className="text-4xl font-bold">Welcome to My Next.js App</h1>
           <p className="mt-4 text-lg">This is a simple starter template.</p>
           <div className="mt-8">
-            <Button
-              variant="outline"
-              size="lg"
-              className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white hover:text-blue-600 transition-all duration-300"
-            >
-              Learn More
+            <Button size="lg" variant="outline" asChild>
+              <Link href="/learn">Learn More</Link>
             </Button>
           </div>
         </div>
