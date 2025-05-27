@@ -289,44 +289,70 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
         onPropertySelect?.(property)
       })
 
-      // Enhanced popup with more details
+      const isSaved = isPropertySaved(property.id)
+      const saveButtonText = isSaved ? "Saved ✓" : "Save Property"
+      const saveButtonClass = isSaved
+        ? "flex-1 bg-green-100 text-green-700 text-xs py-2 px-3 rounded hover:bg-green-200 transition-colors"
+        : "flex-1 bg-gray-100 text-gray-700 text-xs py-2 px-3 rounded hover:bg-gray-200 transition-colors"
+
+      // Enhanced popup with working buttons
       const popup = new mapboxgl.Popup({
         offset: 25,
         closeButton: true,
         closeOnClick: false,
       }).setHTML(
         `<div class="p-4 min-w-[250px]">
-          <div class="flex items-start justify-between mb-2">
-            <h3 class="font-semibold text-lg">${property.owner}</h3>
-            ${isMegaValue ? '<span class="text-yellow-500 text-lg">★</span>' : ""}
-          </div>
-          <p class="text-sm text-gray-600 mb-1">${property.city || property.state}, ${property.state}</p>
-          <p class="text-xs text-gray-500 mb-3">${property.address}</p>
-          <div class="grid grid-cols-2 gap-2 mb-3">
-            <div>
-              <span class="text-xs text-gray-500">Property Value</span>
-              <p class="text-lg font-bold text-green-600">${property.value || property.totalValue}</p>
-            </div>
-            <div>
-              <span class="text-xs text-gray-500">Trust Score</span>
-              <div class="flex items-center gap-1">
-                <span class="text-sm font-semibold ${property.trustScore >= 90 ? "text-green-600" : property.trustScore >= 80 ? "text-yellow-600" : "text-red-600"}">${property.trustScore}%</span>
-                <div class="w-2 h-2 rounded-full ${property.trustScore >= 90 ? "bg-green-500" : property.trustScore >= 80 ? "bg-yellow-500" : "bg-red-500"}"></div>
-              </div>
-            </div>
-          </div>
-          ${property.id.startsWith("search-") ? '<div class="text-xs text-blue-600 font-medium mb-2 flex items-center gap-1"><span class="w-2 h-2 bg-blue-500 rounded-full"></span>Search Result</div>' : ""}
-          ${isHighValue ? '<div class="text-xs text-purple-600 font-medium mb-2 flex items-center gap-1"><span class="w-2 h-2 bg-purple-500 rounded-full"></span>High Value Property</div>' : ""}
-          <div class="flex gap-2">
-            <button class="flex-1 bg-blue-600 text-white text-xs py-2 px-3 rounded hover:bg-blue-700 transition-colors">
-              View Details
-            </button>
-            <button class="flex-1 bg-gray-100 text-gray-700 text-xs py-2 px-3 rounded hover:bg-gray-200 transition-colors">
-              Save Property
-            </button>
-          </div>
-        </div>`,
+    <div class="flex items-start justify-between mb-2">
+      <h3 class="font-semibold text-lg">${property.owner}</h3>
+      ${isMegaValue ? '<span class="text-yellow-500 text-lg">★</span>' : ""}
+    </div>
+    <p class="text-sm text-gray-600 mb-1">${property.city || property.state}, ${property.state}</p>
+    <p class="text-xs text-gray-500 mb-3">${property.address}</p>
+    <div class="grid grid-cols-2 gap-2 mb-3">
+      <div>
+        <span class="text-xs text-gray-500">Property Value</span>
+        <p class="text-lg font-bold text-green-600">${property.value || property.totalValue}</p>
+      </div>
+      <div>
+        <span class="text-xs text-gray-500">Trust Score</span>
+        <div class="flex items-center gap-1">
+          <span class="text-sm font-semibold ${property.trustScore >= 90 ? "text-green-600" : property.trustScore >= 80 ? "text-yellow-600" : "text-red-600"}">${property.trustScore}%</span>
+          <div class="w-2 h-2 rounded-full ${property.trustScore >= 90 ? "bg-green-500" : property.trustScore >= 80 ? "bg-yellow-500" : "bg-red-500"}"></div>
+        </div>
+      </div>
+    </div>
+    ${property.id.startsWith("search-") ? '<div class="text-xs text-blue-600 font-medium mb-2 flex items-center gap-1"><span class="w-2 h-2 bg-blue-500 rounded-full"></span>Search Result</div>' : ""}
+    ${isHighValue ? '<div class="text-xs text-purple-600 font-medium mb-2 flex items-center gap-1"><span class="w-2 h-2 bg-purple-500 rounded-full"></span>High Value Property</div>' : ""}
+    <div class="flex gap-2">
+      <button id="view-details-${property.id}" class="flex-1 bg-blue-600 text-white text-xs py-2 px-3 rounded hover:bg-blue-700 transition-colors">
+        View Details
+      </button>
+      <button id="save-property-${property.id}" class="${saveButtonClass}">
+        ${saveButtonText}
+      </button>
+    </div>
+  </div>`,
       )
+
+      // Add event listeners after popup is added to map
+      popup.on("open", () => {
+        // View Details button handler
+        const viewDetailsBtn = document.getElementById(`view-details-${property.id}`)
+        if (viewDetailsBtn) {
+          viewDetailsBtn.addEventListener("click", () => {
+            handleViewDetails(property)
+            popup.remove()
+          })
+        }
+
+        // Save Property button handler
+        const savePropertyBtn = document.getElementById(`save-property-${property.id}`)
+        if (savePropertyBtn) {
+          savePropertyBtn.addEventListener("click", () => {
+            handleSaveProperty(property)
+          })
+        }
+      })
 
       new mapboxgl.Marker(el).setLngLat(property.coordinates).setPopup(popup).addTo(map.current!)
     })
@@ -502,6 +528,91 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
     )
 
     return [csvHeaders, ...csvRows].join("\n")
+  }
+
+  const handleViewDetails = (property: Property) => {
+    // Navigate to property details page or show detailed modal
+    if (typeof window !== "undefined") {
+      // Option 1: Navigate to property details page
+      window.location.href = `/property/${property.id}`
+
+      // Option 2: Call the onPropertySelect callback if provided
+      // onPropertySelect?.(property)
+
+      // Option 3: Show detailed information in a toast
+      toast({
+        title: `${property.owner}'s Property`,
+        description: `${property.address} - ${property.value} (Trust Score: ${property.trustScore}%)`,
+        duration: 5000,
+      })
+    }
+  }
+
+  const handleSaveProperty = (property: Property) => {
+    // Get existing saved properties from localStorage
+    const existingSaved = localStorage.getItem("trueestate-saved-properties")
+    let savedProperties: Property[] = []
+
+    if (existingSaved) {
+      try {
+        savedProperties = JSON.parse(existingSaved)
+      } catch (error) {
+        console.error("Error parsing saved properties:", error)
+      }
+    }
+
+    // Check if property is already saved
+    const isAlreadySaved = savedProperties.some((saved) => saved.id === property.id)
+
+    if (isAlreadySaved) {
+      // Remove from saved properties
+      savedProperties = savedProperties.filter((saved) => saved.id !== property.id)
+      localStorage.setItem("trueestate-saved-properties", JSON.stringify(savedProperties))
+
+      toast({
+        title: "Property Removed",
+        description: `${property.address} removed from saved properties`,
+        variant: "destructive",
+      })
+
+      // Update button text
+      const saveBtn = document.getElementById(`save-property-${property.id}`)
+      if (saveBtn) {
+        saveBtn.textContent = "Save Property"
+        saveBtn.className =
+          "flex-1 bg-gray-100 text-gray-700 text-xs py-2 px-3 rounded hover:bg-gray-200 transition-colors"
+      }
+    } else {
+      // Add to saved properties
+      savedProperties.push(property)
+      localStorage.setItem("trueestate-saved-properties", JSON.stringify(savedProperties))
+
+      toast({
+        title: "Property Saved",
+        description: `${property.address} added to your saved properties`,
+      })
+
+      // Update button text and style
+      const saveBtn = document.getElementById(`save-property-${property.id}`)
+      if (saveBtn) {
+        saveBtn.textContent = "Saved ✓"
+        saveBtn.className =
+          "flex-1 bg-green-100 text-green-700 text-xs py-2 px-3 rounded hover:bg-green-200 transition-colors"
+      }
+    }
+  }
+
+  const isPropertySaved = (propertyId: string): boolean => {
+    const existingSaved = localStorage.getItem("trueestate-saved-properties")
+    if (!existingSaved) return false
+
+    try {
+      const savedProperties: Property[] = JSON.parse(existingSaved)
+      return savedProperties.some((saved) => saved.id === propertyId)
+    } catch (error) {
+      console.error("Error checking saved properties:", error)
+      return false
+    }
   }
 
   return (
