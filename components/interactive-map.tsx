@@ -47,7 +47,6 @@ interface InteractiveMapProps {
 
 // Property data for all 50 states (keeping the existing data)
 const stateProperties: Property[] = [
-  // West Coast
   {
     id: "ca-1",
     owner: "Sarah Johnson",
@@ -88,8 +87,6 @@ const stateProperties: Property[] = [
     state: "Oregon",
     city: "Portland",
   },
-  // ... (keeping all the existing properties for brevity)
-  // Additional properties would be included here
   {
     id: "ny-1",
     owner: "Jennifer Martinez",
@@ -336,7 +333,15 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({ properties = sta
       })
 
       el.addEventListener("click", () => {
-        onPropertySelect?.(property)
+        // If there's an onPropertySelect callback, use it
+        if (onPropertySelect) {
+          onPropertySelect(property)
+        } else {
+          // Otherwise, navigate directly to the property page
+          if (typeof window !== "undefined") {
+            window.location.href = `/property/${property.id}`
+          }
+        }
       })
 
       const isSaved = isPropertySaved(property.id)
