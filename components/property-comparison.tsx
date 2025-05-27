@@ -42,6 +42,30 @@ const sampleProperties: Property[] = [
     trustScore: 92,
     type: "Penthouse",
   },
+  {
+    id: "4",
+    address: "321 Madison Ave, New York, NY",
+    price: 950000,
+    owner: "Emily Davis",
+    trustScore: 87,
+    type: "Apartment",
+  },
+  {
+    id: "5",
+    address: "654 Lexington Ave, New York, NY",
+    price: 1500000,
+    owner: "Robert Wilson",
+    trustScore: 91,
+    type: "Condo",
+  },
+  {
+    id: "6",
+    address: "987 Park Ave, New York, NY",
+    price: 2800000,
+    owner: "Lisa Anderson",
+    trustScore: 94,
+    type: "Penthouse",
+  },
 ]
 
 export default function PropertyComparison() {
@@ -65,16 +89,118 @@ export default function PropertyComparison() {
     }
   }
 
-  const handleExport = () => {
-    const exportData = {
-      format: exportFormat,
-      scope: exportScope,
-      fields: includeFields,
-      properties: exportScope === "all" ? sampleProperties : selectedProperties,
+  const generateCSV = (properties: Property[]) => {
+    const headers = []
+    const rows = []
+
+    // Build headers based on selected fields
+    if (includeFields.basicInfo) {
+      headers.push("Address", "Property Type")
     }
-    console.log("Exporting data:", exportData)
-    // Here you would implement the actual export functionality
+    if (includeFields.ownership) {
+      headers.push("Owner")
+    }
+    if (includeFields.financial) {
+      headers.push("Price")
+    }
+    if (includeFields.verification) {
+      headers.push("Trust Score")
+    }
+
+    // Build rows
+    properties.forEach((property) => {
+      const row = []
+      if (includeFields.basicInfo) {
+        row.push(property.address, property.type)
+      }
+      if (includeFields.ownership) {
+        row.push(property.owner)
+      }
+      if (includeFields.financial) {
+        row.push(`$${property.price.toLocaleString()}`)
+      }
+      if (includeFields.verification) {
+        row.push(`${property.trustScore}%`)
+      }
+      rows.push(row)
+    })
+
+    // Create CSV content
+    const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n")
+    return csvContent
   }
+
+  const generateJSON = (properties: Property[]) => {
+    const filteredProperties = properties.map((property) => {
+      const filtered: any = {}
+      if (includeFields.basicInfo) {
+        filtered.address = property.address
+        filtered.type = property.type
+      }
+      if (includeFields.ownership) {
+        filtered.owner = property.owner
+      }
+      if (includeFields.financial) {
+        filtered.price = property.price
+      }
+      if (includeFields.verification) {
+        filtered.trustScore = property.trustScore
+      }
+      return filtered
+    })
+    return JSON.stringify(filteredProperties, null, 2)
+  }
+
+  const handleExport = () => {
+    const propertiesToExport = exportScope === "all" ? sampleProperties : selectedProperties
+
+    if (propertiesToExport.length === 0) {
+      alert("No properties to export!")
+      return
+    }
+
+    let content = ""
+    let filename = ""
+    let mimeType = ""
+
+    switch (exportFormat) {
+      case "csv":
+        content = generateCSV(propertiesToExport)
+        filename = `properties-export-${Date.now()}.csv`
+        mimeType = "text/csv"
+        break
+      case "json":
+        content = generateJSON(propertiesToExport)
+        filename = `properties-export-${Date.now()}.json`
+        mimeType = "application/json"
+        break
+      case "pdf":
+        // For PDF, we'll create a simple text version for now
+        content = generateCSV(propertiesToExport)
+        filename = `properties-export-${Date.now()}.txt`
+        mimeType = "text/plain"
+        alert("PDF export coming soon! Downloading as text file for now.")
+        break
+      default:
+        return
+    }
+
+    // Create and download file
+    const blob = new Blob([content], { type: mimeType })
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement("a")
+    link.href = url
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+
+    // Show success message
+    alert(`Successfully exported ${propertiesToExport.length} properties as ${exportFormat.toUpperCase()}!`)
+  }
+
+  const propertyCount = exportScope === "all" ? sampleProperties.length : selectedProperties.length
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -118,35 +244,55 @@ export default function PropertyComparison() {
               ) : (
                 <div className="space-y-3">
                   {selectedProperties.map((property) => (
-                    <div key={property.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={property.id}
+                      className="flex items-center justify-between p-3 border rounded-lg bg-blue-50"
+                    >
                       <div>
                         <p className="font-medium">{property.address}</p>
                         <p className="text-sm text-gray-600">${property.price.toLocaleString()}</p>
+                        <p className="text-xs text-blue-600">Trust Score: {property.trustScore}%</p>
                       </div>
                       <Button variant="outline" size="sm" onClick={() => handlePropertySelect(property)}>
                         Remove
                       </Button>
                     </div>
                   ))}
+                  <div className="pt-3 border-t">
+                    <Button className="w-full" variant="outline">
+                      Compare Selected Properties
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
 
             {/* Sample Properties for Selection */}
             <div>
-              <h4 className="font-medium mb-3">Available Properties</h4>
-              <div className="space-y-2">
+              <h4 className="font-medium mb-3">Available Properties ({sampleProperties.length})</h4>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
                 {sampleProperties.map((property) => (
-                  <div key={property.id} className="flex items-center justify-between p-2 border rounded">
+                  <div
+                    key={property.id}
+                    className="flex items-center justify-between p-3 border rounded hover:bg-gray-50"
+                  >
                     <div className="flex-1">
                       <p className="text-sm font-medium">{property.address}</p>
-                      <p className="text-xs text-gray-600">${property.price.toLocaleString()}</p>
+                      <p className="text-xs text-gray-600">
+                        ${property.price.toLocaleString()} • {property.type}
+                      </p>
+                      <p className="text-xs text-green-600">Trust: {property.trustScore}%</p>
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handlePropertySelect(property)}
                       disabled={selectedProperties.find((p) => p.id === property.id) !== undefined}
+                      className={
+                        selectedProperties.find((p) => p.id === property.id)
+                          ? "bg-blue-100 text-blue-700 border-blue-300"
+                          : ""
+                      }
                     >
                       {selectedProperties.find((p) => p.id === property.id) ? "Added" : "Compare"}
                     </Button>
@@ -316,10 +462,10 @@ export default function PropertyComparison() {
             <Button
               onClick={handleExport}
               className="w-full bg-black text-white hover:bg-gray-800"
-              disabled={exportScope === "selected" && selectedProperties.length === 0}
+              disabled={propertyCount === 0}
             >
               <Download className="w-4 h-4 mr-2" />
-              Export {exportScope === "all" ? sampleProperties.length : selectedProperties.length} Properties
+              Export {propertyCount} Properties
             </Button>
           </CardContent>
         </Card>
